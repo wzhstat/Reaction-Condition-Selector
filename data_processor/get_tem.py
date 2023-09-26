@@ -32,7 +32,9 @@ def extract(reaction):
                 return {'reaction_id': reaction['_id']}
 
     
-def get_temp(data_path = "data/data.csv",save_path = "data/templates.json.gz"):
+def get_temp(save_path = "./data"):
+    data_path = "%s/1976-2016.csv"%save_path
+    save_path = "%s/templates.json.gz"%save_path
     '''
     This function is used to get the templates from the data.
     '''
@@ -65,7 +67,9 @@ def classif(template):
             adic[reaction_smarts].append(_id)
     
         
-def classif_by_temp(temp_path = "data/templates.json.gz", out_path = "data/classif_by_temp.csv" ):
+def classif_by_temp(save_path = "./data"):
+    temp_path = "%s/templates.json.gz"%save_path
+    out_path = "%s/classif_by_temp.csv"%save_path
     '''
     This function is used to classify the data by templates.
     '''
