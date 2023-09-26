@@ -5,7 +5,7 @@ This repository contains a reaction condition selector
 python 3.10
 
 # Install Requirements
-to run the reaction condition selector you need:
+To run the reaction condition selector you need:
 * RDkit
 * RDchiral <br>
-you can go to https://github.com/connorcoley/rdchiral for more informaton
+You can go to https://github.com/connorcoley/rdchiral for more informaton
