@@ -1,2 +1,6 @@
 # Reaction-Condition-Selector
-一个反应选择器，模型为简单nn模型。
+This repository contains a reaction condition selector
+
+#Python version
+python 3.10
+
