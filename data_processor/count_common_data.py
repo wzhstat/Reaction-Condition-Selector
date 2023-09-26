@@ -37,12 +37,13 @@ def count_data(file_path= "./data/data_5+.csv", save_path = "./data/"):
     all_solv_withoutN = {}
     all_reag_withN = {'None':0}
     all_reag_withoutN = {}
-    for i in range(len(data['template'])):
-        if n% 9485 == 0:
-            print(n/9485,'%')
+    lens = len(data['template'])
+    for i in range(lens):
+        if n% (lens//100) == 0:
+            print(n/(lens//100),'%')
         cat = data['cat'][i]
         solv = data['solv'][i]
-        reag = data['reag'][i]
+        reags = [data['reag%s'%j][i] for j in range(4)]
         if cat == 'None':
             all_cat_withN['None'] += 1
         else:
@@ -62,15 +63,16 @@ def count_data(file_path= "./data/data_5+.csv", save_path = "./data/"):
                 all_solv_withN[solv] = 1
                 all_solv_withoutN[solv] = 1
         n += 1
-        if reag == 'None':
-            all_reag_withN['None'] += 1
-        else:
-            if reag in all_reag_withoutN:
-                all_reag_withN[reag] += 1
-                all_reag_withoutN[reag] += 1
+        for reag in reags:
+            if reag == 'None':
+                all_reag_withN['None'] += 1
             else:
-                all_reag_withN[reag] = 1
-                all_reag_withoutN[reag] = 1
+                if reag in all_reag_withoutN:
+                    all_reag_withN[reag] += 1
+                    all_reag_withoutN[reag] += 1
+                else:
+                    all_reag_withN[reag] = 1
+                    all_reag_withoutN[reag] = 1
 
         
     all_cat_withN = {k: v for k, v in sorted(all_cat_withN.items(), key=lambda x: x[1], reverse=True)}
@@ -111,3 +113,6 @@ def count_data(file_path= "./data/data_5+.csv", save_path = "./data/"):
         writer = csv.writer(reagfile)
         writer.writerow(all_reag_withoutN.keys())
         writer.writerow(all_reag_withoutN.values())
+
+
+count_data()
