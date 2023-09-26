@@ -8,4 +8,5 @@ python 3.10
 To run the reaction condition selector you need:
 * RDkit
 * RDchiral <br>
+
 You can go to https://github.com/connorcoley/rdchiral for more informaton
