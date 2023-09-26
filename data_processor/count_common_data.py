@@ -23,7 +23,8 @@ def Cleam_merge(alist):
         outlist.sort()
     return outlist
 
-def count_data(file_path= "./data/data_5+.csv", save_path = "./data/"):
+def count_data(save_path = "./data",m = 5):
+    file_path= "%s/data_%s+.csv"%(save_path,m)
     '''
     save_path: the floder path to save the data.
     This function is used to statistics the conditions.
@@ -115,4 +116,3 @@ def count_data(file_path= "./data/data_5+.csv", save_path = "./data/"):
         writer.writerow(all_reag_withoutN.values())
 
 
-count_data()
