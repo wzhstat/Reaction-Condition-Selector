@@ -99,7 +99,7 @@ def check_charge(rlist,rglist):
 
 
 
-def get_data(load_path="./data/grants",out_path="./data/1976-20161.csv"):
+def get_datas(load_path="./data/grants",out_path="./data/1976-20161.csv"):
     '''
     This function is used to get the data from the xml files and save them into a csv file.
     load_path: the path of the data
@@ -230,9 +230,10 @@ def get_5_data(data_path = "data/1976-2016.csv", temp_path = "data/classif_by_te
     with open(temp_path,'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
+            lens = len(eval(classes))
             for tem in classes:
-                if n%338 == 0:
-                    print(n/338,'%')
+                if n%(lens//100) == 0:
+                    print(n/(lens//100),'%')
                 go = False
                 if len(eval(classes[tem])) < 5:
                     continue
