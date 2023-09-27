@@ -27,19 +27,18 @@ def extract(reaction):
             except KeyboardInterrupt:
                 print('Interrupted')
                 raise KeyboardInterrupt
-            except Exception as e:
-                print(e)
+            except Exception:
                 return {'reaction_id': reaction['_id']}
 
     
-def get_temp(save_path = "./data"):
-    data_path = "%s/1976-2016.csv"%save_path
+def get_temp(data_name,save_path = "./data"):
+    data_path = "%s/%s.csv"%(save_path,data_name)
     save_path = "%s/templates.json.gz"%save_path
     '''
     This function is used to get the templates from the data.
     '''
-    datas = pd.read_csv(data_path,chunksize=1809)
-    for data in datas:  
+    datas = pd.read_csv(data_path,chunksize=18090)
+    for data in datas:
         data['ReactionSmiles'] = data['reaction']
         split_smiles =data['ReactionSmiles'].str.split('>', expand=True)
         data['reactants'] = split_smiles[0]
@@ -67,7 +66,8 @@ def classif(template):
             adic[reaction_smarts].append(_id)
     
         
-def classif_by_temp(save_path = "./data"):
+def classif_by_temp(data_name,save_path = "./data"):
+    get_temp(data_name,save_path)
     temp_path = "%s/templates.json.gz"%save_path
     out_path = "%s/classif_by_temp.csv"%save_path
     '''
@@ -75,7 +75,7 @@ def classif_by_temp(save_path = "./data"):
     '''
     global adic
     adic = {}
-    with gzip.open("path") as f:
+    with gzip.open(temp_path) as f:
         templates = json.load(f)
     for template in templates:
         classif(template,adic)
