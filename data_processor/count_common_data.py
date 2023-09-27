@@ -23,8 +23,8 @@ def Cleam_merge(alist):
         outlist.sort()
     return outlist
 
-def count_data(save_path = "./data",m = 5):
-    file_path= "%s/data_%s+.csv"%(save_path,m)
+def count_data(data_name,save_path = "./data",m1 = 5,mc = 5,ms = 5, mr = 5):
+    file_path= "%s/%s_%s+.csv"%(save_path,data_name,m1)
     '''
     save_path: the floder path to save the data.
     This function is used to statistics the conditions.
@@ -83,6 +83,13 @@ def count_data(save_path = "./data",m = 5):
     all_reag_withN = {k: v for k, v in sorted(all_reag_withN.items(), key=lambda x: x[1], reverse=True)}
     all_reag_withoutN = {k: v for k, v in sorted(all_reag_withoutN.items(), key=lambda x: x[1], reverse=True)}
 
+    all_cat_withN = {k: v for k, v in all_cat_withN.items() if v >= mc}
+    all_cat_withoutN = {k: v for k, v in all_cat_withoutN.items() if v >= mc}
+    all_solv_withN = {k: v for k, v in all_solv_withN.items() if v >= ms}
+    all_solv_withoutN = {k: v for k, v in all_solv_withoutN.items() if v >= ms}
+    all_reag_withN = {k: v for k, v in all_reag_withN.items() if v >= mr}
+    all_reag_withoutN = {k: v for k, v in all_reag_withoutN.items() if v >= mr}
+
 
             
     with open('%s/all_cat_withN.csv'%save_path,'w', newline='') as catfile:
@@ -114,5 +121,4 @@ def count_data(save_path = "./data",m = 5):
         writer = csv.writer(reagfile)
         writer.writerow(all_reag_withoutN.keys())
         writer.writerow(all_reag_withoutN.values())
-
 
