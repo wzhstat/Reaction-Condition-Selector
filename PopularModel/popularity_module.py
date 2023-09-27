@@ -3,6 +3,7 @@ from rdkit.Chem import rdChemReactions
 from rdkit.Chem.rdChemReactions import RemoveMappingNumbersFromReactions
 import hashlib
 import pandas as pd
+from GetPopularityData import get_popularity_data
 
 def get_tem(reaction,n = 0):
     data = {}
@@ -40,21 +41,25 @@ def binary_search(key,hash_key):
     return 0
 
 def popularity_module0(input_data = None):
-    return [0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]
+    return [0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9],[0,1,2,3,4,5,6,7,8,9]
 
 
 
-def popularity_module1(input_data,popularity_data = pd.read_csv('data/popular_data.csv')):
-    reaction = input_data
+def popularity_module1(tem,file_name,path):
+    print("------------------------------------------------")
+    print('start to get popularity data')
+    popularity_data = get_popularity_data(path,file_name)
+    print("------------------------------------------------")
     hash_key = list(popularity_data['hash_id'])
-    tem = get_tem(reaction)
     hash_id = hashlib.md5(tem.encode()).hexdigest()
     n = binary_search(hash_id,hash_key)
     cat_out = {}
     solv_out = {}
+    reag_out = {}
     for i in range(10):
         cat_out['cat_top-%d'%(i+1)] = popularity_data['cat_top-%d'%(i+1)][n]
         solv_out['solv_top-%d'%(i+1)] = popularity_data['solv_top-%d'%(i+1)][n]
-    return cat_out,solv_out
+        reag_out['reag_top-%d'%(i+1)] = popularity_data['reag_top-%d'%(i+1)][n]
+    return cat_out,solv_out,reag_out
 
 
