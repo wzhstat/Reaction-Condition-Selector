@@ -26,9 +26,14 @@ config = {
     "min_num_covered_rxns_by_solvent":5,
     "min_num_covered_rxns_by_reagent":5,
     "min_num_covered_rxns_by_catalyst":5,
-
 }
 ```
+* *data_path* : Is where you save the 1976_Sep2016_USPTOgrants_cm file.
+* *save_path* : Is where you want to save the files.
+*  *min_num_covered_rxns_by_rxn_centralized_template* : Just like it's name it's the number of reactions that the template contains at least, templates containing fewer reactions than this value will be removed
+*  "min_num_covered_rxns_by_solvent" : This is the minimum number of times a certain solvent appears
+*  "min_num_covered_rxns_by_reagent" : This is the minimum number of times a certain reagent appears
+*  "min_num_covered_rxns_by_catalyst" : This is the minimum number of times a certain catalyst appears
 
 
 
