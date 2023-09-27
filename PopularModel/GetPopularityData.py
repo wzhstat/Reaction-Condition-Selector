@@ -25,14 +25,14 @@ def Cleam_merge(alist):
     return outlist
 
 
-def get_popularity_data(file_name = '1976-2016'):
+def get_popularity_data(path = 'data', file_name = '1976-2016'):
     '''
     This function is used to get the most popular catalysts and solvents in an reaction template.
     '''
     n = 0
     all_data = []
-    data = pd.read_csv('data/%s.csv'%(file_name))
-    with open('data/classif_by_temp.csv','r') as f:
+    data = pd.read_csv('%s/%s.csv'%(path, file_name))
+    with open('%s/classif_by_temp.csv'%(path),'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             for tem in classes:
@@ -117,6 +117,4 @@ def get_popularity_data(file_name = '1976-2016'):
     all_data = pd.DataFrame(all_data)
     all_data.to_csv('data/popularity_data.csv')
     print('done')
-
-
-get_popularity_data()
+    return all_data
