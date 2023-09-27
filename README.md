@@ -43,7 +43,7 @@ The following files are generated when you run the program: <br>
 
     _id	reaction	products	reactants	reagent	catalyst	solvent
     1	[Br:1][CH2:2][CH2:3][OH:4].[CH2:5]([S:7](Cl)(=[O:9])=[O:8])[CH3:6].CCOCC>C(N(CC)CC)C>[CH2:5]([S:7]([O:4][CH2:3][CH2:2][Br:1])(=[O:9])=[O:8])[CH3:6]	['C(C)S(=O)(=O)OCCBr']	['BrCCO', 'C(C)S(=O)(=O)Cl']	['CCOCC']	None	['C(C)N(CC)CC']
-    2	[Br:1][CH2:2][CH2:3][CH2:4][OH:5].[CH3:6][S:7](Cl)(=[O:9])=[O:8].CCOCC>C(N(CC)CC)C>[CH3:6][S:7]([O:5][CH2:4][CH2:3][CH2:2][Br:1])(=[O:9])=[O:8]	['CS(=O)(=O)OCCCBr']	['BrCCCO', 'CS(=O)(=O)Cl']	['CCOCC']	None	['C(C)N(CC)CC']
+    2	[N:1](=[C:3]([CH2:7][CH2:8][CH2:9][CH2:10][CH2:11][CH3:12])[C:4](=O)[CH3:5])O.[CH3:13][C:14](=O)[CH2:15][CH2:16][CH2:17][CH2:18][CH2:19][CH2:20][CH3:21].[N:23](Cl)=O.N=C=O>[Zn].C(O)(=O)C>[CH3:13][C:14]1[C:15]([CH2:16][CH2:17][CH2:18][CH2:19][CH2:20][CH3:21])=[N:23][C:4]([CH3:5])=[C:3]([CH2:7][CH2:8][CH2:9][CH2:10][CH2:11][CH3:12])[N:1]=1	['CC1=NC(=C(N=C1CCCCCC)C)CCCCCC']	['N(O)=C(C(C)=O)CCCCCC', 'CC(CCCCCCC)=O', 'N(=O)Cl']	['N=C=O']	['[Zn]']	['C(C)(=O)O']
     3	[CH3:1][O:2][C:3](=[O:17])[C:4]1[C:9]([N+:10]([O-])=O)=[CH:8][C:7]2[O:13][CH2:14][CH2:15][O:16][C:6]=2[CH:5]=1>[Pd].C(O)(=O)C>[CH3:1][O:2][C:3](=[O:17])[C:4]1[C:9]([NH2:10])=[CH:8][C:7]2[O:13][CH2:14][CH2:15][O:16][C:6]=2[CH:5]=1	['COC(C1=CC2=C(C=C1N)OCCO2)=O']	['COC(C1=CC2=C(C=C1[N+](=O)[O-])OCCO2)=O']	None	['[Pd]']	['C(C)(=O)O']
 
 
