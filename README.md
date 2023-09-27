@@ -12,7 +12,7 @@ To run the reaction condition selector you need:
 You can go to https://github.com/connorcoley/rdchiral for more informaton.
 
 # Data Processor
->This file is used to process the reaction condition data of USPTO1976-2016, and requires the 1976_Sep2016_USPTOgrants_cm file, which can be downloaded from the following address: https://figshare.com/articles/dataset/Chemical_reactions_from_US_patents_1976-Sep2016_/5104873 <br>
+This file is used to process the reaction condition data of USPTO1976-2016, and requires the 1976_Sep2016_USPTOgrants_cm file, which can be downloaded from the following address: https://figshare.com/articles/dataset/Chemical_reactions_from_US_patents_1976-Sep2016_/5104873 <br>
 
 ## Config Settings
 Here are some config you can change before generating a dataset:
