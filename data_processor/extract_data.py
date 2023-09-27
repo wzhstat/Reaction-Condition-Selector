@@ -6,6 +6,7 @@ import csv
 import pandas as pd
 from rdkit import Chem
 from rdchiral import template_extractor
+csv.field_size_limit(500 * 1024 * 1024)
 
 '''
 def extract(reaction):
@@ -99,8 +100,8 @@ def check_charge(rlist,rglist):
 
 
 
-def get_datas(load_path="./data/grants",save_path="./data"):
-    out_path = "%s/1976-2016.csv"%save_path
+def get_datas(data_name,load_path="./data/grants",save_path="./data"):
+    out_path = "%s/%s.csv"%(save_path,data_name)
     '''
     This function is used to get the data from the xml files and save them into a csv file.
     load_path: the path of the data
@@ -221,26 +222,29 @@ def get_datas(load_path="./data/grants",save_path="./data"):
     print('alldone')
 
 
-def get_m_data(save_path="./data" ,m = 5):
+def get_m_data(data_name,save_path="./data" ,m = 5):
     '''
     This function is used to get the data that the template has more than m reactions.
     '''
-    data_path = "%s/1976-2016.csv"%save_path
+    data_path = "%s/%s.csv"%(save_path,data_name)
     temp_path = "%s/classif_by_temp.csv"%save_path
-    out_path = "%s/data_%s+.csv"%(save_path,m)
+    out_path = "%s/%s_%s+.csv"%(save_path,data_name,m)
     n = 0
     all_data = []
     data = pd.read_csv(data_path)
     with open(temp_path,'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
-            lens = len(eval(classes))
+            lens = len(classes)  
+            print("num of temp:",lens)
             for tem in classes:
-                if n%(lens//100) == 0:
-                    print(n/(lens//100),'%')
-                go = False
-                if len(eval(classes[tem])) < 5:
+                if len(eval(classes[tem])) < m:
                     continue
+                if tem == 'else':
+                    continue
+                if n%(lens//1000) == 0:
+                    print(n/((lens//1000)*10),'%')
+                go = False
                 for i in eval(classes[tem]):
                     adic = {}
                     cats = data['catalyst'][int(i)-1]
@@ -264,7 +268,8 @@ def get_m_data(save_path="./data" ,m = 5):
                     adic['cat'] = cat
                     adic['solv'] = solv
                     if reag == 'None':
-                        pass
+                        for i in range(4):
+                            adic['reag%s'%i] = 'None'
                     else:
                         reag = Cleam_merge(reag)
                         for i in range(4):
@@ -276,6 +281,7 @@ def get_m_data(save_path="./data" ,m = 5):
                     all_data .append(adic)
                 if go:
                     n +=1
+                    
                     
     all_data = pd.DataFrame(all_data)
     print(all_data)
