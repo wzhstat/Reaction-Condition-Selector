@@ -15,7 +15,7 @@ You can go to https://github.com/connorcoley/rdchiral for more informaton.
 This file is used to process the reaction condition data of USPTO1976-2016, and requires the 1976_Sep2016_USPTOgrants_cm file, which can be downloaded from the following address: https://figshare.com/articles/dataset/Chemical_reactions_from_US_patents_1976-Sep2016_/5104873 <br>
 
 ## Config Settings
-To get the data for training, you can run ```get_data.py```, this  uses only the CPU and takes about 3 hours to run on a laptop, but before runing the program here are some config you can change:
+To get the data for training, you can run ```get_data.py```, this  uses only the CPU and takes about 3 hours to run on a laptop. Before runing the program, here are some config you can change:
 ```
 config = {
     'data_name':'1976-2016',
