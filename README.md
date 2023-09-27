@@ -27,13 +27,13 @@ config = {
     "min_num_covered_rxns_by_catalyst":5,
 }
 ```
-* *data_name* : Is the name of the data.
-* *data_path* : Is where you save the 1976_Sep2016_USPTOgrants_cm file.
-* *save_path* : Is where you want to save the files.
-*  *min_num_covered_rxns_by_rxn_centralized_template* : Just like it's name it's the number of reactions that the template contains at least, templates containing fewer reactions than this value will be removed
-*  "min_num_covered_rxns_by_solvent" : This is the minimum number of times a certain solvent appears
-*  "min_num_covered_rxns_by_reagent" : This is the minimum number of times a certain reagent appears
-*  "min_num_covered_rxns_by_catalyst" : This is the minimum number of times a certain catalyst appears
+* ```data_name```: Is the name of the data.
+* ```data_path```: Is where you save the 1976_Sep2016_USPTOgrants_cm file.
+* ```save_path```: Is where you want to save the files.
+* ```min_num_covered_rxns_by_rxn_centralized_template```: Just like it's name it's the number of reactions that the template contains at least, templates containing fewer reactions than this value will be removed
+* ```min_num_covered_rxns_by_solvent```: This is the minimum number of times a certain solvent appears
+* ```min_num_covered_rxns_by_reagent```: This is the minimum number of times a certain reagent appears
+* ```min_num_covered_rxns_by_catalyst```: This is the minimum number of times a certain catalyst appears
 
 ## Output Files
     The following files are generated when you run the program: <br>
