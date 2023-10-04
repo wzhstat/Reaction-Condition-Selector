@@ -26,6 +26,7 @@ def Cleam_merge(alist):
     '''
     newlist = eval(str(alist))
     outlist = []
+    charge_list = []
     for r in newlist:
         mols = r.split('.')
         ol = []
@@ -38,9 +39,13 @@ def Cleam_merge(alist):
         ol.sort()
         s = '.'.join(i for i in ol)
         if s not in outlist:
-            outlist.append(s)
+            if "+" in s or "-" in s:
+                charge_list.append(s)
+            else:
+                outlist.append(s)
+        charge_list.sort()
         outlist.sort()
-    return outlist
+    return charge_list+outlist
 
 def check_charge(rlist,rglist):
     '''
@@ -223,6 +228,7 @@ def get_datas(data_name,load_path="./data/grants",save_path="./data"):
 
 
 def get_m_data(data_name,save_path="./data" ,m = 5):
+    global data
     '''
     This function is used to get the data that the template has more than m reactions.
     '''
