@@ -1,4 +1,4 @@
-from data_processor import extract_data, count_common_data, get_tem
+from data_processor import ExtractData, CountCommonData, GetTem
 
 config = {
     'data_name':'1976-2016',
