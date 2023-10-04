@@ -1,4 +1,5 @@
-from data_processor import ExtractData, CountCommonData, GetTem
+from DataProcessor import ExtractData, CountCommonData, GetTem
+import time
 
 config = {
     'data_name':'1976-2016',
@@ -14,23 +15,35 @@ config = {
 
 
 if __name__ == '__main__':
+    t0 = time.time()
     print("------------------")
     print("start to get data")
-    extract_data.get_datas(config['data_name'], config['data_path'], config['save_path'])
+    ExtractData.get_datas(config['data_name'], config['data_path'], config['save_path'])
+    t1 = time.time()
     print("extract data done")
+    print("time used:", t1-t0)
     print("------------------")
     print("start to get template")
-    get_tem.classif_by_temp(config['data_name'], config['save_path'])
+    GetTem.classif_by_temp(config['data_name'], config['save_path'])
+    t2 = time.time()
     print("get template done")
+    print("time used:", t2-t1)
     print("------------------")
     print("start to get m data")
-    extract_data.get_m_data(config['data_name'], config['save_path'], config['min_num_covered_rxns_by_rxn_centralized_template'])
+    ExtractData.get_m_data(config['data_name'], config['save_path'], config['min_num_covered_rxns_by_rxn_centralized_template'])
+    t3 = time.time()
     print("get m data done")
+    print("time used:", t3-t2)
     print("------------------")
     print("start to statistic data")
-    count_common_data.count_data(config['data_name'], config['save_path'], config['min_num_covered_rxns_by_rxn_centralized_template'], config['min_num_covered_rxns_by_catalyst'], config['min_num_covered_rxns_by_solvent'], config['min_num_covered_rxns_by_reagent'])
+    CountCommonData.count_data(config['data_name'], config['save_path'], config['min_num_covered_rxns_by_rxn_centralized_template'], config['min_num_covered_rxns_by_catalyst'], config['min_num_covered_rxns_by_solvent'], config['min_num_covered_rxns_by_reagent'])
+    t4 = time.time()
     print("statistic data done")
+    print("time used:", t4-t3)
     print("------------------")
+    t5 = time.time()
+    print("all done")
+    print("time used:", t5-t0)
 
 
 
