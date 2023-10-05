@@ -3,7 +3,7 @@ This section contains some simple feedforward neural network models with inputs 
 
 ## Training 
 To train a model, you can run ```train_nnmodel.py'''. Depending on the number of epochs selected, the training time is about 1h. Here are some config you can change: <pr>
-'''
+```
 config = {
     'data_name':'1976-2016_5+',
     'save_path':'./data',
@@ -17,4 +17,4 @@ config = {
     'Ir': 0.0001,
     'batch_size': 128
 }
-'''
+```
