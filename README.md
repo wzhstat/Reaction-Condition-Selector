@@ -67,7 +67,7 @@ This section contains some simple feedforward neural network models with inputs 
 ```nnModel2```: An MLP model with one full connection layer and two highway layers, n1 is 128 by default, This model differs from Model 1 in that its input contains a reaction template in the form of one-hot in addition to the molecular fingerprints of the reactants and products<br>
 
 ## Training 
-To train a model, you can run ```train_nnmodel.py```. Depending on the number of epochs selected, the training time is about 1h. Here are some config you can change: <pr>
+To train a model, you can run ```train_nnmodel.py```. Depending on the number of epochs selected, the training time is about 1-10h. Here are some config you can change: <pr>
 ```
 config = {
     'data_name':'1976-2016_5+',
