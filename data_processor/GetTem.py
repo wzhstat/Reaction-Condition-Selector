@@ -37,23 +37,22 @@ def get_temp(data_name,save_path = "./data"):
     '''
     This function is used to get the templates from the data.
     '''
-    datas = pd.read_csv(data_path,chunksize=18090)
-    for data in datas:
-        data['ReactionSmiles'] = data['reaction']
-        split_smiles =data['ReactionSmiles'].str.split('>', expand=True)
-        data['reactants'] = split_smiles[0]
-        data['spectators'] = split_smiles[1]
-        data['products'] = split_smiles[2]   
-        data['catalyst'] = data['catalyst']
-        data['solvent'] = data['solvent']
-        data['reagent'] = data['reagent']
-        parsable = Parallel(n_jobs=-1, verbose=1)(delayed(can_parse)(rsmi) for rsmi in data['ReactionSmiles'].values)
-        data = data[parsable]
-        data['_id'] = data['_id']
-        reactions = data[['_id', 'reactants', 'products', 'catalyst','solvent','reagent']].to_dict('records')
-        templates = Parallel(n_jobs=-1, verbose=4)(delayed(extract)(reaction) for reaction in reactions)
-        templates = pd.DataFrame(templates)
-        templates.to_json(save_path, orient='records', compression='gzip')
+    data = pd.read_csv(data_path)
+    data['ReactionSmiles'] = data['reaction']
+    split_smiles =data['ReactionSmiles'].str.split('>', expand=True)
+    data['reactants'] = split_smiles[0]
+    data['spectators'] = split_smiles[1]
+    data['products'] = split_smiles[2]   
+    data['catalyst'] = data['catalyst']
+    data['solvent'] = data['solvent']
+    data['reagent'] = data['reagent']
+    parsable = Parallel(n_jobs=-1, verbose=4)(delayed(can_parse)(rsmi) for rsmi in data['ReactionSmiles'].values)
+    data = data[parsable]
+    data['_id'] = data['_id']
+    reactions = data[['_id', 'reactants', 'products', 'catalyst','solvent','reagent']].to_dict('records')
+    templates = Parallel(n_jobs=-1, verbose=4)(delayed(extract)(reaction) for reaction in reactions)
+    templates = pd.DataFrame(templates)
+    templates.to_json(save_path, orient='records', compression='gzip')
 
 
 def classif(template):
@@ -78,7 +77,7 @@ def classif_by_temp(data_name,save_path = "./data"):
     with gzip.open(temp_path) as f:
         templates = json.load(f)
     for template in templates:
-        classif(template,adic)
+        classif(template)
     print('done classify')
 
     #print(len(adic))
@@ -95,3 +94,5 @@ def classif_by_temp(data_name,save_path = "./data"):
         writer = csv.DictWriter(csvfile,fieldnames=keys)
         writer.writeheader()
         writer.writerow(bdic)
+
+
