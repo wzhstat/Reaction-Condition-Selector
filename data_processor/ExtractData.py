@@ -6,6 +6,7 @@ import csv
 import pandas as pd
 from rdkit import Chem
 from rdchiral import template_extractor
+from rdkit.Chem.rdChemReactions import RemoveMappingNumbersFromReactions
 csv.field_size_limit(500 * 1024 * 1024)
 
 '''
@@ -19,6 +20,13 @@ def extract(reaction):
         print(e)
         return {'reaction_id': reaction['_id']}
 '''
+
+def remove_mapping(a):
+    a = Chem.MolFromSmiles(a)
+    for atom in a.GetAtoms():
+        atom.SetAtomMapNum(0)
+    a = Chem.MolToSmiles(a)
+    return a
 
 def Cleam_merge(alist):
     '''
@@ -47,10 +55,12 @@ def Cleam_merge(alist):
         outlist.sort()
     return charge_list+outlist
 
+
 def check_charge(rlist,rglist):
     '''
     This function is used to check the charge of the reactants and reagents.
     '''
+
     if len(rglist) == 0:
         return rlist,'None'
     else:
@@ -137,14 +147,21 @@ def get_datas(data_name,load_path="./data/grants",save_path="./data"):
                         r = r.split('.')
                         p = p.split('.')
                         for i in r:
-                            if ':' in i:
+                            if 'C:' in i or 'CH:' in i or 'CH2:' in i or 'CH3:' in i:
                                 rlist.append(i)
                             else:
-                                try: 
-                                    i = Chem.CanonSmiles(i)
-                                except Exception as e:
-                                    print(e)
-                                    i = i
+                                if ":" in i:
+                                    try: 
+                                        i = remove_mapping(i)
+                                    except Exception as e:
+                                        print(e)
+                                        i = i
+                                else:
+                                    try: 
+                                        i = Chem.CanonSmiles(i)
+                                    except Exception as e:
+                                        print(e)
+                                        i = i
                                 rglist.append(i)
                     rlist,rglist = check_charge(rlist,rglist)
 
@@ -201,9 +218,10 @@ def get_datas(data_name,load_path="./data/grants",save_path="./data"):
                                 else:
                                     clist.append(identifier.getAttribute('value'))
 
-                    
+                    if len(plist) == 0 or len(all_rlist) == 0:
+                        continue
                     alist.append(n)
-                    alist.append(reactionSmarts)
+                    alist.append(reactionSmart)
                     alist.append(plist)
                     alist.append(all_rlist)
                     alist.append(all_rglist)
