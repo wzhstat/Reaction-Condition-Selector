@@ -196,7 +196,7 @@ def train_model_withT(teml,model,target, train_loader,test_loader,loss_function,
             if step % 900 == 899:
                 print('[%d, %5d] loss: %.3f' % (epoch + 1, step + 1, running_loss / 900))
                 running_loss = 0.0
-        test_model_withT(teml,model,test_loader,use_all=False)
+        acc = test_model_withT(teml,model,test_loader,use_all=False)
     if withN:
         torch.save(model,'models/%s_model_withN.pt'%target)
     else:
@@ -218,6 +218,7 @@ def test_model_withT(teml,model,test_loader,use_all = True):
             if use_all == False and step >=100:
                 break
     print('Accuracy on test set: %.4f' % (correct / total))
+    return correct / total
 
 def topk_acc_withT(teml,model,test_loader,k):
     '''
@@ -235,6 +236,7 @@ def topk_acc_withT(teml,model,test_loader,k):
                 if b_t[i] in predicted[i]:
                     correct += 1
     print('Top%d acc: %.4f' % (k,correct / total))
+    return correct / total
 
 def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, batch_size, loss_function = nn.CrossEntropyLoss()):
     print('start to get train data')
@@ -254,12 +256,16 @@ def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, bat
         n0 = len(input1)*512
         print('n0:',n0)
         model = Model(targetl,n0,n1,n2)
-        train_model(model,target, train_loader,test_loader,loss_function = loss_function,Ir = Ir,epochs = epochs,withN = withN)
+        acc= train_model(model,target, train_loader,test_loader,loss_function = loss_function,Ir = Ir,epochs = epochs,withN = withN)
         print('------------------------------------')
-        topk_acc(model,test_loader,k=3)
+        acc3 = topk_acc(model,test_loader,k=3)
         print('------------------------------------')
-        topk_acc(model,test_loader,k=10)
+        acc10 = topk_acc(model,test_loader,k=10)
         print('------------------------------------')
+        outdic = {'acc':acc,'acc3':acc3,'acc10':acc10}
+        outdic = pd.DataFrame(outdic,index=[0])
+        outdic.to_csv('models/%s_%s_out.csv'%(target,file_name))
+
 
     elif Model == nnModel2:
         X_train, X_test, y_train, y_test = train_test_split(data[['input','tem']], data[target], test_size=0.1)
