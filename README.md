@@ -90,7 +90,7 @@ config = {
 * ```target```: A list of the models you want to train.
 * ```n1```: The size of the first hidden layer.
 * ```n2```: The size of the second hidden layer.
-* ```Hierarchical prediction```: 
+* ```Hierarchical prediction```: This variable initiates a hierarchical model training, in which the first trained model variable is added to the next model input. In the example of config, the catalyst information is converted into a 512-dimensional fingerprint input when training the solv model and the catalyst information and solvent information input when training the reag0 model.
 
 
 
