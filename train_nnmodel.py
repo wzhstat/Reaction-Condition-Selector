@@ -4,20 +4,24 @@ config = {
     'data_name':'1976-2016_5+',
     'save_path':'./data',
     'model_path':'./models',
-    'model': MLPModel.nnModel2,
+    'model': MLPModel.nnModel1,
+    'input': 'rfpgen+pfpgen+rxnfp', #['rfpgen+pfpgen','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+tem'] 
     'target':['cat','solv','reag0','reag1'],
     'withN': False,
-    'epochs': { 'cat': 1, 'solv':1 , 'reag0': 1, 'reag1': 1},
+    'epochs': { 'cat': 40, 'solv':10 , 'reag0': 30, 'reag1': 30},
     'n1': 128,
-    'n2': 32,
+    'n2': 64,
     'Ir': 0.0001,
-    'batch_size': 128
+    'batch_size': 128,
+    'Hierarchical prediction':True
 }
 
 if __name__ == '__main__':
     for target in config['target']:
         print('start to train %s model'%target)
-        TrainModel.train(config['model'], 
+        if target == 'reag1':
+            TrainModel.train(config['input'],
+                         config['model'], 
                          config['save_path'], 
                          config['data_name'], 
                          config['withN'],
@@ -26,7 +30,9 @@ if __name__ == '__main__':
                          config['n1'], 
                          config['n2'],
                          config['Ir'], 
-                         config['batch_size'])  
+                         config['batch_size'])
         print('train %s model done'%target)
         print('------------------')
+        if config['Hierarchical prediction']:
+            config['input'] += '+%s'%target
     print('all done')
