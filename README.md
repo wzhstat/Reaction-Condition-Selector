@@ -74,15 +74,23 @@ config = {
     'save_path':'./data',
     'model_path':'./models',
     'model': MLPModel.nnModel1,
+    'input': 'rfpgen+pfpgen+rxnfp', #['rfpgen+pfpgen','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+tem'] 
     'target':['cat','solv','reag0','reag1'],
     'withN': False,
-    'epochs': { 'cat': 30, 'solv':10 , 'reag0': 10, 'reag1': 30},
+    'epochs': { 'cat': 30, 'solv':30 , 'reag0': 30, 'reag1': 30},
     'n1': 128,
-    'n2': 32,
+    'n2': 64,
     'Ir': 0.0001,
-    'batch_size': 128
+    'batch_size': 128,
+    'Hierarchical prediction':True
 }
 ```
+* ```withN```: Indicates whether to filter None data from data
+* ```input```: This variable is used to determine the input of the reaction, the conventional inputs are 'rfpgen+pfpgen','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+ pfpgen+tem','rfpgen+pfpgen+tem','rfpgen+pfpgen+ tem ', You can also control whether conditional information is added by adding '+cat', '+ solv ', '+reag0', etc. to the tail.
+* ```target```: A list of the models you want to train.
+* ```n1```: The size of the first hidden layer.
+* ```n2```: The size of the second hidden layer.
+* ```Hierarchical prediction```: 
 
 
 
