@@ -24,10 +24,10 @@ class nnModel0(nn.Module):
     output: x-dim reaction conditions
     The input pass through two nnlayers.
     '''
-    def __init__(self, out_size ,n1 = 128, n2 = 32 ,dp = 0.1):
+    def __init__(self, out_size, n0 ,n1 = 128, n2 = 32 ,dp = 0.1):
         super(nnModel0,self).__init__()
         self.l1 = nn.Sequential(
-            nn.Linear(1024,n1),
+            nn.Linear(n0,n1),
             nn.Dropout(dp),
             nn.ELU()
         )
@@ -40,8 +40,8 @@ class nnModel0(nn.Module):
             nn.Linear(n2,out_size),
             nn.Softmax()
         )
-    def forward(self,x1 ,x2):
-        x = torch.cat((x1, x2), dim=1)
+    def forward(self,xs):
+        x = torch.cat(xs,dim=1)
         x = self.l2(self.l1(x))
         return self.out(x)
 
@@ -53,10 +53,10 @@ class nnModel1(nn.Module):
     output: x-dim reaction conditions
     The input pass through a nn layer and two highway layer.
     '''
-    def __init__(self, out_size ,n1 = 128, n2 = 32 ,dp = 0.1):
+    def __init__(self, out_size,n0 ,n1 = 128, n2 = 32 ,dp = 0.1):
         super(nnModel1,self).__init__()
         self.l1 = nn.Sequential(
-            nn.Linear(1024,n1),
+            nn.Linear(n0,n1),
             nn.Dropout(dp),
             nn.ELU()
         )
@@ -70,8 +70,8 @@ class nnModel1(nn.Module):
             nn.Linear(n1,out_size),
             nn.Softmax()
         )
-    def forward(self,x1 ,x2):
-        x = torch.cat((x1, x2), dim=1)
+    def forward(self,xs):
+        x = torch.cat(xs,dim=1)
         x3 = self.l1(x)
         for layer in self.l2:
             x3 = layer(x3)
@@ -104,16 +104,13 @@ class nnModel2(nn.Module):
             nn.Softmax()
         )
 
-    def forward(self, x1, x2, x3):
-        x = torch.cat((x1, x2, x3), dim=1)
+    def forward(self, xs):
+        x = torch.cat(xs, dim=1)
         x = self.l1(x)
         for layer in self.l2:
             x = layer(x)
         x = self.out(x)
         return x
-
-
-
 
 
 
