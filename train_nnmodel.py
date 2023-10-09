@@ -13,14 +13,16 @@ config = {
     'n2': 64,
     'Ir': 0.0001,
     'batch_size': 128,
+    'condition filter': True,
     'Hierarchical prediction':True
 }
 
 if __name__ == '__main__':
+    if config['condition filter']:
+        TrainModel.get_tem_condition(config['withN'],config['save_path'],config['data_name'])
     for target in config['target']:
         print('start to train %s model'%target)
-        if target == 'reag1':
-            TrainModel.train(config['input'],
+        TrainModel.train(config['input'],
                          config['model'], 
                          config['save_path'], 
                          config['data_name'], 
@@ -30,7 +32,9 @@ if __name__ == '__main__':
                          config['n1'], 
                          config['n2'],
                          config['Ir'], 
-                         config['batch_size'])
+                         config['batch_size'],
+                         config['Hierarchical prediction']
+                         )
         print('train %s model done'%target)
         print('------------------')
         if config['Hierarchical prediction']:
