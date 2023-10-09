@@ -74,14 +74,15 @@ config = {
     'save_path':'./data',
     'model_path':'./models',
     'model': MLPModel.nnModel1,
-    'input': 'rfpgen+pfpgen+rxnfp', #['rfpgen+pfpgen','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+tem'] 
+    'input': 'rfpgen+pfpgen+rxnfp', #['rfpgen+pfpgen','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+tem'] 
     'target':['cat','solv','reag0','reag1'],
     'withN': False,
-    'epochs': { 'cat': 30, 'solv':30 , 'reag0': 30, 'reag1': 30},
+    'epochs': { 'cat': 40, 'solv':10 , 'reag0': 30, 'reag1': 30},
     'n1': 128,
     'n2': 64,
     'Ir': 0.0001,
     'batch_size': 128,
+    'condition filter': True,
     'Hierarchical prediction':True
 }
 ```
@@ -90,6 +91,7 @@ config = {
 * ```target```: A list of the models you want to train.
 * ```n1```: The size of the first hidden layer.
 * ```n2```: The size of the second hidden layer.
+* ```condition filter```: This parameter controls whether to add a result filter, which first counts the condition used by all templates, outputs a template condition library, and filters out the output that is not included in the library.
 * ```Hierarchical prediction```: This variable initiates a hierarchical model training, in which the first trained model variable is added to the next model input. In the example of config, the catalyst information is converted into a 512-dimensional fingerprint input when training the solv model and the catalyst information and solvent information input when training the reag0 model.
 
 
