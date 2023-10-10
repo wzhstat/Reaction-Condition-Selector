@@ -83,17 +83,17 @@ def get_tem_condition(withN ,path, file_name):
         N = 'withN'
     else:
         N = 'withoutN'
-    with open('./data/all_cat_%s.csv'%N,'r') as f:
+    with open('%s/all_cat_%s.csv'%(path,N),'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             cat_list = list(classes.keys())
 
-    with open('./data/all_solv_%s.csv'%N,'r') as f:
+    with open('%s/all_solv_%s.csv'%(path,N),'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             solv_list = list(classes.keys())
     
-    with open('./data/all_reag_%s.csv'%N,'r') as f:
+    with open('%s/all_reag_%s.csv'%(path,N),'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             reag_list = list(classes.keys())
