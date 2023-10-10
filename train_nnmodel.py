@@ -19,7 +19,7 @@ config = {
 
 if __name__ == '__main__':
     if config['condition filter']:
-        TrainModel.get_tem_condition(config['withN'],config['save_path'],config['data_name'])
+        TrainModel.sum_tem_condition(config['withN'],config['save_path'],config['data_name'])
     for target in config['target']:
         print('start to train %s model'%target)
         TrainModel.train(config['input'],
