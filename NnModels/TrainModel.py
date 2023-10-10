@@ -13,6 +13,7 @@ from rdkit.Chem import AllChem
 import rdkit.Chem as Chem
 import numpy as np
 import pandas as pd
+import time
 from rdkit.Chem import rdChemReactions
 from rdkit.Chem.rdChemReactions import RemoveMappingNumbersFromReactions
 
@@ -27,7 +28,7 @@ def get_one_hot_tem(tem,teml):
     tems = torch.tensor(blist, dtype=torch.float32)
     return tems
 
-def get_top_1(add_filter,outputs, tem, target, dlist):
+def get_top_1(add_filter,tem,outputs,target,dlist):
     if add_filter:
         out = []
         for i in range(outputs.size(0)):
@@ -35,7 +36,7 @@ def get_top_1(add_filter,outputs, tem, target, dlist):
             Max_index = None
             Max = -1000
             for j in range(outputs[i].size(0)):
-                if outputs[i][j].data > Max and j in t_list:
+                if outputs[i][j].data > Max and j in t_list:  
                     Max = outputs[i][j].data
                     Max_index = j
             if Max_index == None:
@@ -209,7 +210,6 @@ def get_train_data(inputs, path = 'data', file_name = '1976-2016_5+',withN = Fal
         t_data.append(dic)
     print('n template:',max_tem+1)
     t_data = pd.DataFrame(t_data)
-    print(len(t_data['input'][0]))
     return t_data,len(target_list),max_tem+1
 
 def train_model(model,target, train_loader,test_loader,add_filter,loss_function,Ir,epochs,withN,dic_list):
@@ -230,11 +230,12 @@ def train_model(model,target, train_loader,test_loader,add_filter,loss_function,
             if step % 900 == 899:
                 print('[%d, %5d] loss: %.3f' % (epoch + 1, step + 1, running_loss / 900))
                 running_loss = 0.0
-        test_model(model,target,test_loader,add_filter,dic_list,use_all=False)
+        acc = test_model(model,target,test_loader,add_filter,dic_list,use_all=False)
     if withN:
         torch.save(model,'models/%s_model_withN.pt'%target)
     else:
         torch.save(model,'models/%s_model_withoutN.pt'%target)
+    return acc
 
 def test_model(model,target, test_loader,add_filter,dic_list,use_all = True):
     '''
@@ -252,8 +253,10 @@ def test_model(model,target, test_loader,add_filter,dic_list,use_all = True):
             if use_all == False and step >=100:
                 break
     print('Accuracy on test set: %.4f' % (correct / total))
+    return correct / total
 
 def topk_acc(model,test_loader,k):
+    print('get top acc')
     '''
     This function is used to calculate the topk accuracy.
     '''
@@ -269,6 +272,7 @@ def topk_acc(model,test_loader,k):
                 if b_t[i] in predicted[i]:
                     correct += 1
     print('Top%d acc: %.4f' % (k,correct / total))
+    return correct / total
 
 
 def train_model_withT(teml,model,target, train_loader,test_loader,loss_function,Ir,epochs,withN):
