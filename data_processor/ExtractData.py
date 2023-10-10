@@ -22,6 +22,12 @@ def extract(reaction):
 '''
 
 def remove_mapping(a):
+    """
+    Remove the mapping from Smarts.
+
+    Args:
+        a (str): A mol in Smarts.
+    """
     a = Chem.MolFromSmiles(a)
     for atom in a.GetAtoms():
         atom.SetAtomMapNum(0)
@@ -30,11 +36,21 @@ def remove_mapping(a):
 
 def Cleam_merge(alist):
     '''
-    This function is used to clean the smiles and merge the same smiles.
+    Clean and merge a list of dictionaries.
+
+    Args:
+        alist (list): A list of dictionaries.
+
+    Returns:
+        A merged list.
     '''
+
+    #Get the list of reactants and reagents.
     newlist = eval(str(alist))
     outlist = []
     charge_list = []
+
+    #Clean and merge the list.
     for r in newlist:
         mols = r.split('.')
         ol = []
@@ -59,6 +75,10 @@ def Cleam_merge(alist):
 def check_charge(rlist,rglist):
     '''
     This function is used to check the charge of the reactants and reagents.
+
+    Args:
+        rlist (list): A list of reactants.
+        rglist (list): A list of reagents.
     '''
 
     if len(rglist) == 0:
@@ -121,6 +141,12 @@ def get_datas(data_name,load_path="./data/grants",save_path="./data"):
     This function is used to get the data from the xml files and save them into a csv file.
     load_path: the path of the data
     save_path: the path of the csv file
+
+    Args:
+        data_name (str): The name of the dataset.
+        load_path (str): The path of the data.
+        save_path (str): The path to save the results.
+
     '''
     header = ['_id','reaction','products','reactants','reagent','catalyst','solvent']
     n = 1
@@ -249,6 +275,9 @@ def get_m_data(data_name,save_path="./data" ,m = 5):
     global data
     '''
     This function is used to get the data that the template has more than m reactions.
+    data_name: the name of the dataset
+    save_path: the path to save the results
+    m: the minimum number of occurrences for a reaction type.
     '''
     data_path = "%s/%s.csv"%(save_path,data_name)
     temp_path = "%s/classif_by_temp.csv"%save_path
