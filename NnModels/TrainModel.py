@@ -122,18 +122,33 @@ def get_conditionfp(condition):
         print(e)
         return np.array([0]*512)
 
+def sum_tem_condition(withN, path, file_name):
+    """
+    Summarize the condition of each template in the given file.
 
-def sum_tem_condition(withN ,path, file_name):
+    Args:
+        withN (bool): Whether to include nitrogen in the condition.
+        path (str): The path to the file.
+        file_name (str): The name of the file.
 
+    Returns:
+        dict: A dictionary containing the condition of each template.
+    """
+    # Set the suffix for the file name based on whether nitrogen is included in the condition.
     if withN:
         N = 'withN'
     else:
         N = 'withoutN'
-    count_conditions = ['cat','solv','reag']
+
+    # Define the list of conditions to count.
+    count_conditions = ['cat', 'solv', 'reag']
+
+    # Loop through each condition and read the corresponding file.
     for count_condition in count_conditions:
-        with open('%s/all_%s_%s.csv'%(path,count_condition,N),'r') as f:
+        with open('%s/all_%s_%s.csv' % (path, count_condition, N), 'r') as f:
             reader = csv.DictReader(f)
             for classes in reader:
+                # Get the list of classes for each condition.
                 if count_condition == 'cat':
                     cat_list = list(classes.keys())
                 elif count_condition == 'solv':
@@ -141,21 +156,25 @@ def sum_tem_condition(withN ,path, file_name):
                 else:
                     reag_list = list(classes.keys())
 
-    data = pd.read_csv('%s/%s.csv'%(path,file_name))
+    # Read the input file.
+    data = pd.read_csv('%s/%s.csv' % (path, file_name))
     l = len(data['template'])
     all_data = {}
+
+    # Loop through each template in the input file.
     for i in range(l):
-        if i % (l//100 ) == 0:
-            print('%d%%'%(i/(l//100)))
+        # Print the progress every 1%.
+        if i % (l // 100) == 0:
+            print('%d%%' % (i / (l // 100)))
+
+        # Get the template.
         tem = data['template'][i]
-        if tem not in all_data:
-            all_data[tem] = {}
-            all_data[tem]['cat'] = set()
-            all_data[tem]['solv'] = set()
-            all_data[tem]['reag0'] = set()
-            all_data[tem]['reag1'] = set()
-            all_data[tem]['reag2'] = set()
+
+        # If the template is not in the dictionary, add an empty set each condition.
         conditions = ['cat','solv','reag0','reag1','reag2']
+        if tem not in all_data:
+            all_data[tem] = {c: set() for c in ['cat','solv','reag0','reag1','reag2']}
+        # Add the condition to the set for each condition.
         for condition in conditions:
             if condition in ['reag0','reag1','reag2']:
                 if data[condition][i] in reag_list:
@@ -163,18 +182,34 @@ def sum_tem_condition(withN ,path, file_name):
             else:
                 if data[condition][i] in eval(condition+'_list'):
                     all_data[tem][condition].add(data[condition][i])
-    all_data = pd.DataFrame(all_data).T
-    print(all_data)
-    print(len(all_data))
-    all_data.to_csv('./data/temp_condition.csv')
-    print('done')
+        all_data = pd.DataFrame(all_data).T
+        all_data.to_csv('%s/temp_condition.csv' % path)
+    return all_data
 
 
-def get_train_data(inputs, path = 'data', file_name = '1976-2016_5+',withN = False, target = 'cat'):
+def generate_train_data(
+        inputs: str,
+        path: str,
+        file_name: str,
+        withN: bool,
+        target: str
+        ):
     '''
-    This function is used to get the data from the csv file.
+    Generate training data from the specified target.
+    Args:
+        inputs (str): The input to the model.
+        path (str): The path to the data file.
+        file_name (str): The name of the data file.
+        withN (bool): Whether to include None in the condition.
+        target (str): The target to predict.
+    Returns:
+        tuple: The training data, the number of classes, and the number of templates.
     '''
+
+    # Load the data file.
     data = pd.read_csv('%s/%s.csv'%(path,file_name))
+
+    # Set the suffix for the file name based on whether None is included in the condition.
     if withN:
         file_name1 = "withN"
     else:
@@ -195,17 +230,18 @@ def get_train_data(inputs, path = 'data', file_name = '1976-2016_5+',withN = Fal
 
     print("n %s:"%target,len(target_list))
 
+    # Generate the reaction fingerprints.
     rxnfps = Parallel(n_jobs=-1, verbose=4)(delayed(get_rxnfp)(reaction) for reaction in list(data[['reactants','products']].apply(tuple, axis=1)))
     t_data = []
     max_tem = 0
-    if 'cat' in inputs:
-        catfp = Parallel(n_jobs=-1, verbose=4)(delayed(get_conditionfp)(reaction) for reaction in data['cat'])
-    if 'solv' in inputs:
-        solvfp = Parallel(n_jobs=-1, verbose=4)(delayed(get_conditionfp)(reaction) for reaction in data['solv'])
-    if 'reag0' in inputs:
-        reagfp0 = Parallel(n_jobs=-1, verbose=4)(delayed(get_conditionfp)(reaction) for reaction in data['reag0'])
-    if 'reag1' in inputs:
-        reagfp1 = Parallel(n_jobs=-1, verbose=4)(delayed(get_conditionfp)(reaction) for reaction in data['reag1'])
+
+    # Generate the reaction fingerprints.
+    conditions = ['cat','solv','reag0','reag1','reag2']
+    conditionfps = {"catfp":[],"solvfp":[],"reag0fp":[],"reag1fp":[],"reag2fp":[]}
+    for condition in conditions:
+        if condition in inputs:
+            conditionfps[condition+'fp'] = Parallel(n_jobs=-1, verbose=4)(delayed(get_conditionfp)(reaction) for reaction in data[condition])
+
     for i in range(len(rxnfps)):
         dic = {}
         if data[target][i] not in target_list:
@@ -215,14 +251,9 @@ def get_train_data(inputs, path = 'data', file_name = '1976-2016_5+',withN = Fal
         dic['input'] = np.concatenate((rxnfps[i][0],rxnfps[i][1]))
         if 'rxnfp' in inputs:
             dic['input'] =np.concatenate((dic['input'],rxnfps[i][2]))
-        if 'cat' in inputs:
-            dic['input'] = np.concatenate((dic['input'],catfp[i]))
-        if 'solv' in inputs:
-            dic['input'] = np.concatenate((dic['input'],solvfp[i]))
-        if 'reag0' in inputs:
-            dic['input'] = np.concatenate((dic['input'],reagfp0[i]))
-        if 'reag1' in inputs:
-            dic['input'] = np.concatenate((dic['input'],reagfp1[i]))
+        for condition in conditions:
+            if condition in inputs:
+                dic['input'] = np.concatenate((dic['input'],conditionfps[condition+'fp'][i]))
         dic['tem'] = data['template'][i]
         if data['template'][i] > max_tem:
             max_tem = data['template'][i]
@@ -365,7 +396,7 @@ def topk_acc_withT(teml,model,test_loader,k):
 
 def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, batch_size, add_filter, loss_function = nn.CrossEntropyLoss()):
     print('start to get train data')
-    data,targetl,teml = get_train_data(inputs,path, file_name, withN, target)
+    data,targetl,teml = generate_train_data(inputs,path, file_name, withN, target)
     input1 = inputs.split('+')
     if add_filter:
         with open('data/temp_condition.csv','r') as f:
