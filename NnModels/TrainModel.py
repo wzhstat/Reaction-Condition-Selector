@@ -266,72 +266,181 @@ def generate_train_data(
 
 
 
-def train_model(model,target, train_loader,test_loader,add_filter,loss_function,Ir,epochs,withN,dic_list):
+def train_model(
+        model: nn.Module,
+        target: str, 
+        train_loader: Data.DataLoader,
+        test_loader:  Data.DataLoader,
+        add_filter: bool,
+        loss_function,
+        Ir: float,
+        epochs: int,
+        withN: bool,
+        dic_list:list):
     '''
-    This function is used to train the model.
+    Train the reaction classification model.
+    
+    Args:
+        model (nn.Module): The model to train.
+        target (str): The target to predict.
+        train_loader (Data.DataLoader): The training data.
+        test_loader (Data.DataLoader): The test data.
+        add_filter (bool): Whether to add a filter.
+        loss_function (nn.Module): The loss function.
+        Ir (int): The learning rate.
+        epochs (int): The number of epochs.
+        withN (bool): Whether to include None in the condition.
+        dic_list (list): The list of filters.
+
     '''
     optimizer = torch.optim.Adam(model.parameters(),lr=Ir)
     for epoch in range(epochs):
+        # Set the model to training mode.
+        model.train()
         running_loss = 0.0
+
+        # Loop through the training data in batches.
         for step,data in enumerate(train_loader):
+            # Zero the gradients.
             optimizer.zero_grad()
+
+            # Get inputs
             b_t = data[-1]
+
+            # Forward pass.
             out = model(data[0])
             loss = loss_function(out,b_t)
+
+            # Backward pass and optimization.
             loss.backward()
             optimizer.step()
             running_loss += loss.item()
+
+            # Print the and validation accuracy.
             if step % 900 == 899:
                 print('[%d, %5d] loss: %.3f' % (epoch + 1, step + 1, running_loss / 900))
                 running_loss = 0.0
         acc = test_model(model,target,test_loader,add_filter,dic_list,use_all=False)
+
+    # Save the trained model.
     if withN:
         torch.save(model,'models/%s_model_withN.pt'%target)
     else:
         torch.save(model,'models/%s_model_withoutN.pt'%target)
     return acc
 
-def test_model(model,target, test_loader,add_filter,dic_list,use_all = True):
+def test_model(
+        model: nn.Module,
+        target: str, 
+        test_loader: Data.DataLoader,
+        add_filter: bool,
+        dic_list: list,
+        use_all: bool= True):
     '''
-    This function is used to test the model.
+    Test the reaction classification model.
+
+    Args:
+        model (nn.Module): The trained model.
+        target (str): The target reaction type.
+        test_loader (DataLoader): The test data loader.
+        add_filter (bool): Whether to use additional filters.
+        dic_list (list): The list of dictionaries containing the filter information.
+        use_all (bool): Whether to use all the test data.
     '''
+    # Initialize the counters.
     correct = 0
     total = 0
+    # Set the model to evaluation mode.
     with torch.no_grad(): 
+        # Loop through the test data.
         for step,data in enumerate(test_loader):
+
+            # Get inputs
             b_t = data[-1]
+
+            # Get the predicted labels.
             outputs = model(data[0])
             predicted = get_top_1(add_filter,data[1],outputs.data,target,dic_list) 
+
+            # Update the counters.
             total += b_t.size(0)
             correct += (predicted == b_t).sum().item()
             if use_all == False and step >=100:
                 break
+    # Print the and validation accuracy.
     print('Accuracy on test set: %.4f' % (correct / total))
     return correct / total
 
-def topk_acc(model,test_loader,k):
-    print('get top acc')
+
+def topk_acc(
+    model: nn.Module,
+    test_loader: Data.DataLoader,
+    k: int):
+
     '''
     This function is used to calculate the topk accuracy.
+
+    Args:
+        model (nn.Module): The trained model.
+        test_loader (DataLoader): The test data loader.
+        k (int): The value of k.
+
     '''
+    # Initialize the counters.
     correct = 0
     total = 0
+    # Set the model to evaluation mode.
     with torch.no_grad():
+
+        # Loop through the test data.
         for step,data in enumerate(test_loader):
+
+            # Get inputs
             b_t = data[-1]
+
+            # Get the predicted labels.
             outputs = model(data[0])
             _, predicted = torch.topk(outputs.data, k = k, dim = 1)
+
+            # Update the counters.
             total += b_t.size(0)
             for i in range(len(predicted)):
                 if b_t[i] in predicted[i]:
                     correct += 1
+
+    # Print the and validation accuracy.
     print('Top%d acc: %.4f' % (k,correct / total))
     return correct / total
 
 
-def train_model_withT(model,target, train_loader,test_loader,teml,add_filter,loss_function,Ir,epochs,withN,dic_list):
+def train_model_withT(
+        model: nn.Module,
+        target: str,
+        train_loader: Data.DataLoader,
+        test_loader:  Data.DataLoader,
+        teml: int,
+        add_filter: bool,
+        loss_function,
+        Ir:float,
+        epochs: int,
+        withN: bool,
+        dic_list:list
+        ):
     '''
-    This function is used to train the model.
+    This function is used to train the model with template.
+
+    Args:
+        model (nn.Module): The model to train.
+        target (str): The target to predict.
+        train_loader (Data.DataLoader): The training data.
+        test_loader (Data.DataLoader): The test data.
+        teml (int): The length of the template.
+        add_filter (bool): Whether to add a filter.
+        loss_function (nn.Module): The loss function.
+        Ir (int): The learning rate.
+        epochs (int): The number of epochs.
+        withN (bool): Whether to include None in the condition.
+        dic_list (list): The list of filters.
     '''
     optimizer = torch.optim.Adam(model.parameters(),lr=Ir)
     for epoch in range(epochs):
@@ -340,7 +449,7 @@ def train_model_withT(model,target, train_loader,test_loader,teml,add_filter,los
             optimizer.zero_grad()
             b_t = data[-1]
             b_tem = get_one_hot_tem(data[1],teml)
-            out = model((data[0],data[1]))
+            out = model((data[0],b_tem))
             loss = loss_function(out,b_t)
             loss.backward()
             optimizer.step()
@@ -355,9 +464,20 @@ def train_model_withT(model,target, train_loader,test_loader,teml,add_filter,los
         torch.save(model,'models/%s_model_withoutN.pt'%target)
     return acc
 
+
+
 def test_model_withT(model,target, test_loader,teml,add_filter,dic_list,use_all = True):
     '''
-    This function is used to test the model.
+    This function is used to test the model with template.
+
+    Args:
+        model (nn.Module): The trained model.
+        target (str): The target reaction type.
+        test_loader (DataLoader): The test data loader.
+        teml (int): The length of the template.
+        add_filter (bool): Whether to use additional filters.
+        dic_list (list): The list of dictionaries containing the filter information.
+        use_all (bool): Whether to use all the test data.
     '''
     correct = 0
     total = 0
@@ -365,7 +485,7 @@ def test_model_withT(model,target, test_loader,teml,add_filter,dic_list,use_all 
         for step,data in enumerate(test_loader):
             b_t = data[-1]
             b_tem = get_one_hot_tem(data[1],teml)
-            outputs = model((data[0],data[1]))
+            outputs = model((data[0],b_tem))
             predicted = get_top_1(add_filter,data[1],outputs.data,target,dic_list) 
             total += b_t.size(0)
             correct += (predicted == b_t).sum().item()
@@ -374,9 +494,15 @@ def test_model_withT(model,target, test_loader,teml,add_filter,dic_list,use_all 
     print('Accuracy on test set: %.4f' % (correct / total))
     return correct / total
 
+
 def topk_acc_withT(teml,model,test_loader,k):
     '''
-    This function is used to calculate the topk accuracy.
+    This function is used to calculate the topk accuracy with template.
+
+    Args:
+        model (nn.Module): The trained model.
+        test_loader (DataLoader): The test data loader.
+        k (int): The value of k.
     '''
     correct = 0
     total = 0
@@ -384,7 +510,7 @@ def topk_acc_withT(teml,model,test_loader,k):
         for step, data in enumerate(test_loader):
             b_t = data[-1]
             b_tem = get_one_hot_tem(data[1],teml)
-            outputs = model((data[0],data[1]))
+            outputs = model((data[0],b_tem))
             _, predicted = torch.topk(outputs.data, k = k, dim = 1)
             total += b_t.size(0)
             for i in range(len(predicted)):
@@ -394,10 +520,49 @@ def topk_acc_withT(teml,model,test_loader,k):
     return correct / total
 
 
-def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, batch_size, add_filter, loss_function = nn.CrossEntropyLoss()):
+def train(
+        inputs: str,
+        Model: nn.Module,
+        path: str, 
+        file_name: str, 
+        withN: bool, 
+        target: str, 
+        epochs: int, 
+        n1: int, 
+        n2: int, 
+        Ir: float, 
+        batch_size: int, 
+        add_filter: bool = False, 
+        loss_function = nn.CrossEntropyLoss()):
+    
+    '''
+    Train the reaction classification model.
+
+    Args:
+        inputs (str): The path to the input data.
+        Model (nn.Module): The PyTorch model to train.
+        path (str): The path to save the trained model.
+        file_name (str): The name of the file to save the trained model.
+        withN (bool): Whether to include nitrogen in the condition.
+        target (str): The target reaction type.
+        epochs (int): The number of epochs to train for.
+        n1 (int): The size of the first hidden layer.
+        n2 (int): The size of the second hidden layer.
+        Ir (float): The initial learning rate.
+        batch_size (int): The batch size.
+        add_filter (bool): Whether to use additional filters.
+        loss_function (nn.Module): The loss function to use.
+
+    '''
     print('start to get train data')
+
+    # Get the training data.
     data,targetl,teml = generate_train_data(inputs,path, file_name, withN, target)
+
+    # Split the data into training and test sets.
     input1 = inputs.split('+')
+
+    # Get the training and test data.
     if add_filter:
         with open('data/temp_condition.csv','r') as f:
             reader = csv.DictReader(f)
@@ -418,6 +583,8 @@ def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, bat
     n0 = len(input1)*512
     print('n0:',n0)
     print('get data done')
+
+    # Train the model.
     if Model in [nnModel0,nnModel1]:
         model = Model(targetl,n0,n1,n2)
         acc= train_model(model,target, train_loader,test_loader,add_filter = add_filter,loss_function = loss_function,Ir = Ir,epochs = epochs,withN = withN,dic_list=dic_list)
