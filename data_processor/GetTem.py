@@ -12,10 +12,23 @@ from rdkit.Chem.rdChemReactions import RemoveMappingNumbersFromReactions
 
 
 def can_parse(rsmi):
+    """
+    Check if a SMILES string can be parsed.
+
+    Args:
+        rsmi (str): The SMILES string to check.
+
+    Returns:
+        bool: True if the SMILES string can be parsed, False otherwise.
+    """
     #rea = rdChemReactions.ReactionFromSmarts(str(rsmi))
     #RemoveMappingNumbersFromReactions(rea)
     #rea = rdChemReactions.ReactionToSmiles(rea)
+    
+    # Get reactants and products
     react, spec, prod = rsmi.split('>')
+
+    # Check if reactants and products can be parsed
     if Chem.MolFromSmiles(react) and Chem.MolFromSmiles(prod):
         return True
     else:
@@ -33,26 +46,34 @@ def extract(reaction):
     
 def get_temp(data_name,save_path = "./data"):
     data_path = "%s/%s.csv"%(save_path,data_name)
-    save_path = "%s/templates.json.gz"%save_path
+    save_path1 = "%s/templates1.json.gz"%save_path
+    save_path2 = "%s/templates2.json.gz"%save_path
     '''
     This function is used to get the templates from the data.
+
+    Args:
+        data_name (str): The name of the data.
+        save_path (str): The path to save the template data.
+
     '''
-    data = pd.read_csv(data_path)
-    data['ReactionSmiles'] = data['reaction']
-    split_smiles =data['ReactionSmiles'].str.split('>', expand=True)
-    data['reactants'] = split_smiles[0]
-    data['spectators'] = split_smiles[1]
-    data['products'] = split_smiles[2]   
-    data['catalyst'] = data['catalyst']
-    data['solvent'] = data['solvent']
-    data['reagent'] = data['reagent']
-    parsable = Parallel(n_jobs=-1, verbose=4)(delayed(can_parse)(rsmi) for rsmi in data['ReactionSmiles'].values)
-    data = data[parsable]
-    data['_id'] = data['_id']
-    reactions = data[['_id', 'reactants', 'products', 'catalyst','solvent','reagent']].to_dict('records')
-    templates = Parallel(n_jobs=-1, verbose=4)(delayed(extract)(reaction) for reaction in reactions)
-    templates = pd.DataFrame(templates)
-    templates.to_json(save_path, orient='records', compression='gzip')
+
+    # Read data from csv file
+    datas = pd.read_csv(data_path, chunksize=10000)
+
+    # Extract templates from reactions
+    for data in datas:
+        data['ReactionSmiles'] = data['reaction']
+        split_smiles =data['ReactionSmiles'].str.split('>', expand=True)
+        data['reactants'] = split_smiles[0]
+        data['products'] = split_smiles[2]   
+        parsable = Parallel(n_jobs=-1, verbose=4)(delayed(can_parse)(rsmi) for rsmi in data['ReactionSmiles'].values)
+        data = data[parsable]
+        data['_id'] = data['_id']
+        reactions = data[['_id', 'reactants', 'products']].to_dict('records')
+        templates = Parallel(n_jobs=-1, verbose=4)(delayed(extract)(reaction) for reaction in reactions)
+        print('done extract')
+        templates = pd.DataFrame(templates)
+        templates.to_json("%s/templates.json.gz"%(save_path), orient='records', compression='gzip')
 
 
 def classif(template):
@@ -94,5 +115,4 @@ def classif_by_temp(data_name,save_path = "./data"):
         writer = csv.DictWriter(csvfile,fieldnames=keys)
         writer.writeheader()
         writer.writerow(bdic)
-
 
