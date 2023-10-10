@@ -16,19 +16,44 @@ import pandas as pd
 import time
 from rdkit.Chem import rdChemReactions
 from rdkit.Chem.rdChemReactions import RemoveMappingNumbersFromReactions
+from collections import defaultdict
+
+def get_one_hot_tem(tem, teml):
+    """
+    Get the one-hot encoding of the template.
+
+    Args:
+        tem (torch.Tensor): The template.
+        teml (int): The length of the template.
+
+    Returns:
+        torch.Tensor: The one-hot encoding of the template.
+    """
+    # Create a list of zeros with length teml for each input in the template.
+    blist = [[0] * teml for _ in range(len(tem))]
+
+    # Set the position of the input value to 1 in each list.
+    for i, t in enumerate(tem):
+        blist[i][int(t)] = 1
+
+    # Convert the list to a tensor.
+    return torch.tensor(blist, dtype=torch.float32)
 
 
+def get_top_1(add_filter, tem, outputs, target, dlist):
+    """
+    Get the top 1 prediction for each input.
 
-def get_one_hot_tem(tem,teml):
-    blist = []
-    for i in list(tem):
-        alist = [0]*teml
-        alist[int(i)] = 1
-        blist.append(alist)
-    tems = torch.tensor(blist, dtype=torch.float32)
-    return tems
+    Args:
+        add_filter (bool): Whether to add a filter.
+        tem (torch.Tensor): The template.
+        outputs (torch.Tensor): The outputs.
+        target (torch.Tensor): The target.
+        dlist (List[str]): The list of filters.
 
-def get_top_1(add_filter,tem,outputs,target,dlist):
+    Returns:
+        torch.Tensor: The top 1 prediction.
+    """
     if add_filter:
         out = []
         for i in range(outputs.size(0)):
@@ -47,27 +72,47 @@ def get_top_1(add_filter,tem,outputs,target,dlist):
         _, predicted = torch.max(outputs.data, dim = 1) 
         return predicted
 
+
 def get_rxnfp(reaction):
     '''
     Get the fingerprint of the reaction.
+
+    Args:
+        reaction (tuple):reactant and product smiles
+    
+    Returns:
+        tuple: reactant fingerprint, product fingerprint, reaction fingerprint
     '''
     try:
+        # Get the reactants and products from the reaction.
         (reactant,product) = reaction
         rm = Chem.MolFromSmiles(reactant)
         pm = Chem.MolFromSmiles(product)
+
+        # Get the Morgan fingerprint for each molecule.
         info = {}
         rfpgen= np.array(AllChem.GetMorganFingerprintAsBitVect(rm, useChirality=True, radius=2, nBits = 512, bitInfo=info))
         pfpgen= np.array(AllChem.GetMorganFingerprintAsBitVect(pm, useChirality=True, radius=2, nBits = 512, bitInfo=info))
+        
+        # Calculate the reaction fingerprint by subtracting the product fingerprint from the reactant fingerprint.
         rxnfp = pfpgen-rfpgen
         return (rfpgen,pfpgen,rxnfp)
     except Exception as e:
         print(e)
         return (None,None,None)
 
+
+
 def get_conditionfp(condition):
-    '''
-    Get the fingerprint of the reaction conditions.
-    '''
+    """
+    Get the condition fingerprint for a given condition.
+
+    Args:
+        condition (str): The condition smiles
+
+    Returns:
+        numpy.ndarray: The condition fingerprint.
+    """
     try:
         condition = Chem.MolFromSmiles(condition)
         info = {}
@@ -75,80 +120,55 @@ def get_conditionfp(condition):
         return confp
     except Exception as e:
         print(e)
-        return [0]*512
+        return np.array([0]*512)
 
 
-def get_tem_condition(withN ,path, file_name):
+def sum_tem_condition(withN ,path, file_name):
+
     if withN:
         N = 'withN'
     else:
         N = 'withoutN'
-    with open('%s/all_cat_%s.csv'%(path,N),'r') as f:
-        reader = csv.DictReader(f)
-        for classes in reader:
-            cat_list = list(classes.keys())
+    count_conditions = ['cat','solv','reag']
+    for count_condition in count_conditions:
+        with open('%s/all_%s_%s.csv'%(path,count_condition,N),'r') as f:
+            reader = csv.DictReader(f)
+            for classes in reader:
+                if count_condition == 'cat':
+                    cat_list = list(classes.keys())
+                elif count_condition == 'solv':
+                    solv_list = list(classes.keys())
+                else:
+                    reag_list = list(classes.keys())
 
-    with open('%s/all_solv_%s.csv'%(path,N),'r') as f:
-        reader = csv.DictReader(f)
-        for classes in reader:
-            solv_list = list(classes.keys())
-    
-    with open('%s/all_reag_%s.csv'%(path,N),'r') as f:
-        reader = csv.DictReader(f)
-        for classes in reader:
-            reag_list = list(classes.keys())
-    all_data = []
     data = pd.read_csv('%s/%s.csv'%(path,file_name))
-    tem = data['template'][0]
-    adic = {}
-    adic['tem'] = tem
-    adic['cat'] = []
-    adic['solv'] = []
-    adic['reag0'] = []
-    adic['reag1'] = []
-    adic['reag2'] = []
-    print('start to get temp_condition')
     l = len(data['template'])
+    all_data = {}
     for i in range(l):
         if i % (l//100 ) == 0:
             print('%d%%'%(i/(l//100)))
-        if data['template'][i] != tem:
-            all_data.append(adic)
-            tem = data['template'][i]
-            adic = {}
-            adic['tem'] = tem
-            adic['cat'] = []
-            adic['solv'] = []
-            adic['reag0'] = []
-            adic['reag1'] = []
-            adic['reag2'] = []
-            if data['cat'][i] in cat_list and cat_list.index(data['cat'][i]) not in adic['cat']:
-                adic['cat'].append(cat_list.index(data['cat'][i]))
-            if data['solv'][i] in solv_list and solv_list.index(data['solv'][i]) not in adic['solv']:
-                adic['solv'].append(solv_list.index(data['solv'][i]))
-            if data['reag0'][i] in reag_list and reag_list.index(data['reag0'][i]) not in adic['reag0']:
-                adic['reag0'].append(reag_list.index(data['reag0'][i]))
-            if data['reag1'][i] in reag_list and reag_list.index(data['reag1'][i]) not in adic['reag1']:
-                adic['reag1'].append(reag_list.index(data['reag1'][i]))
-            if data['reag2'][i] in reag_list and reag_list.index(data['reag2'][i]) not in adic['reag2']:
-                adic['reag2'].append(reag_list.index(data['reag2'][i]))
-        else:
-            if data['cat'][i] in cat_list and cat_list.index(data['cat'][i]) not in adic['cat']:
-                adic['cat'].append(cat_list.index(data['cat'][i]))
-            if data['solv'][i] in solv_list and solv_list.index(data['solv'][i]) not in adic['solv']:
-                adic['solv'].append(solv_list.index(data['solv'][i]))
-            if data['reag0'][i] in reag_list and reag_list.index(data['reag0'][i]) not in adic['reag0']:
-                adic['reag0'].append(reag_list.index(data['reag0'][i]))
-            if data['reag1'][i] in reag_list and reag_list.index(data['reag1'][i]) not in adic['reag1']:
-                adic['reag1'].append(reag_list.index(data['reag1'][i]))
-            if data['reag2'][i] in reag_list and reag_list.index(data['reag2'][i]) not in adic['reag2']:
-                adic['reag2'].append(reag_list.index(data['reag2'][i]))
-
-    all_data = pd.DataFrame(all_data)
+        tem = data['template'][i]
+        if tem not in all_data:
+            all_data[tem] = {}
+            all_data[tem]['cat'] = set()
+            all_data[tem]['solv'] = set()
+            all_data[tem]['reag0'] = set()
+            all_data[tem]['reag1'] = set()
+            all_data[tem]['reag2'] = set()
+        conditions = ['cat','solv','reag0','reag1','reag2']
+        for condition in conditions:
+            if condition in ['reag0','reag1','reag2']:
+                if data[condition][i] in reag_list:
+                    all_data[tem][condition].add(data[condition][i])
+            else:
+                if data[condition][i] in eval(condition+'_list'):
+                    all_data[tem][condition].add(data[condition][i])
+    all_data = pd.DataFrame(all_data).T
     print(all_data)
     print(len(all_data))
     all_data.to_csv('./data/temp_condition.csv')
     print('done')
+
 
 def get_train_data(inputs, path = 'data', file_name = '1976-2016_5+',withN = False, target = 'cat'):
     '''
@@ -211,6 +231,9 @@ def get_train_data(inputs, path = 'data', file_name = '1976-2016_5+',withN = Fal
     print('n template:',max_tem+1)
     t_data = pd.DataFrame(t_data)
     return t_data,len(target_list),max_tem+1
+
+
+
 
 def train_model(model,target, train_loader,test_loader,add_filter,loss_function,Ir,epochs,withN,dic_list):
     '''
@@ -275,17 +298,18 @@ def topk_acc(model,test_loader,k):
     return correct / total
 
 
-def train_model_withT(teml,model,target, train_loader,test_loader,loss_function,Ir,epochs,withN):
+def train_model_withT(model,target, train_loader,test_loader,teml,add_filter,loss_function,Ir,epochs,withN,dic_list):
     '''
     This function is used to train the model.
     '''
     optimizer = torch.optim.Adam(model.parameters(),lr=Ir)
     for epoch in range(epochs):
         running_loss = 0.0
-        for step,(b_r,b_p,b_tem,b_t) in enumerate(train_loader):
+        for step,data in enumerate(train_loader):
             optimizer.zero_grad()
-            b_tem = get_one_hot_tem(b_tem,teml)
-            out = model((b_r,b_p,b_tem))
+            b_t = data[-1]
+            b_tem = get_one_hot_tem(data[1],teml)
+            out = model((data[0],data[1]))
             loss = loss_function(out,b_t)
             loss.backward()
             optimizer.step()
@@ -293,23 +317,25 @@ def train_model_withT(teml,model,target, train_loader,test_loader,loss_function,
             if step % 900 == 899:
                 print('[%d, %5d] loss: %.3f' % (epoch + 1, step + 1, running_loss / 900))
                 running_loss = 0.0
-        acc = test_model_withT(teml,model,test_loader,use_all=False)
+        acc = test_model_withT(model,target,test_loader,teml,add_filter,dic_list,use_all=False)
     if withN:
         torch.save(model,'models/%s_model_withN.pt'%target)
     else:
         torch.save(model,'models/%s_model_withoutN.pt'%target)
+    return acc
 
-def test_model_withT(teml,model,test_loader,use_all = True):
+def test_model_withT(model,target, test_loader,teml,add_filter,dic_list,use_all = True):
     '''
     This function is used to test the model.
     '''
     correct = 0
     total = 0
     with torch.no_grad(): 
-        for step,(b_x,b_p,b_tem,b_t) in enumerate(test_loader):
-            b_tem = get_one_hot_tem(b_tem,teml)
-            outputs = model((b_x,b_p,b_tem))
-            _, predicted = torch.max(outputs.data, dim = 1) 
+        for step,data in enumerate(test_loader):
+            b_t = data[-1]
+            b_tem = get_one_hot_tem(data[1],teml)
+            outputs = model((data[0],data[1]))
+            predicted = get_top_1(add_filter,data[1],outputs.data,target,dic_list) 
             total += b_t.size(0)
             correct += (predicted == b_t).sum().item()
             if use_all == False and step >=100:
@@ -324,9 +350,10 @@ def topk_acc_withT(teml,model,test_loader,k):
     correct = 0
     total = 0
     with torch.no_grad():
-        for step,(b_x,b_p,b_tem,b_t) in enumerate(test_loader):
-            b_tem = get_one_hot_tem(b_tem,teml)
-            outputs = model((b_x,b_p,b_tem))
+        for step, data in enumerate(test_loader):
+            b_t = data[-1]
+            b_tem = get_one_hot_tem(data[1],teml)
+            outputs = model((data[0],data[1]))
             _, predicted = torch.topk(outputs.data, k = k, dim = 1)
             total += b_t.size(0)
             for i in range(len(predicted)):
@@ -334,6 +361,7 @@ def topk_acc_withT(teml,model,test_loader,k):
                     correct += 1
     print('Top%d acc: %.4f' % (k,correct / total))
     return correct / total
+
 
 def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, batch_size, add_filter, loss_function = nn.CrossEntropyLoss()):
     print('start to get train data')
@@ -345,21 +373,21 @@ def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, bat
             dic_list = list(reader)
     else:
         dic_list = None
+    X_train, X_test, y_train, y_test = train_test_split(data[['input','tem']], data[target], test_size=0.1)
+    X_train_tensor0 = torch.tensor(list(X_train['input']), dtype=torch.float32)
+    X_train_tensor2 = torch.tensor(list(X_train['tem']), dtype=torch.float32)
+    y_train_tensor = torch.tensor(list(y_train), dtype=torch.int64)
+    X_test_tensor0 = torch.tensor(list(X_test['input']), dtype=torch.float32)
+    X_test_tensor2 = torch.tensor(list(X_test['tem']), dtype=torch.float32)
+    y_test_tensor = torch.tensor(list(y_test), dtype=torch.int64)
+    train_dataset = Data.TensorDataset(X_train_tensor0, X_train_tensor2, y_train_tensor)
+    train_loader = Data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
+    test_dataset = Data.TensorDataset(X_test_tensor0, X_test_tensor2, y_test_tensor)
+    test_loader = Data.DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
+    n0 = len(input1)*512
+    print('n0:',n0)
+    print('get data done')
     if Model in [nnModel0,nnModel1]:
-        X_train, X_test, y_train, y_test = train_test_split(data[['input','tem']], data[target], test_size=0.1)
-        X_train_tensor0 = torch.tensor(list(X_train['input']), dtype=torch.float32)
-        X_train_tensor2 = torch.tensor(list(X_train['tem']), dtype=torch.float32)
-        y_train_tensor = torch.tensor(list(y_train), dtype=torch.int64)
-        X_test_tensor0 = torch.tensor(list(X_test['input']), dtype=torch.float32)
-        X_test_tensor2 = torch.tensor(list(X_test['tem']), dtype=torch.float32)
-        y_test_tensor = torch.tensor(list(y_test), dtype=torch.int64)
-        train_dataset = Data.TensorDataset(X_train_tensor0, X_train_tensor2, y_train_tensor)
-        train_loader = Data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
-        test_dataset = Data.TensorDataset(X_test_tensor0, X_test_tensor2, y_test_tensor)
-        test_loader = Data.DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
-        print('get data done')
-        n0 = len(input1)*512
-        print('n0:',n0)
         model = Model(targetl,n0,n1,n2)
         acc= train_model(model,target, train_loader,test_loader,add_filter = add_filter,loss_function = loss_function,Ir = Ir,epochs = epochs,withN = withN,dic_list=dic_list)
         print('------------------------------------')
@@ -373,27 +401,14 @@ def train(inputs ,Model, path, file_name, withN, target, epochs, n1, n2, Ir, bat
 
 
     elif Model == nnModel2:
-        X_train, X_test, y_train, y_test = train_test_split(data[['input','tem']], data[target], test_size=0.1)
-        X_train_tensor0 = torch.tensor(list(X_train['input']), dtype=torch.float32)
-        X_train_tensor2 = torch.tensor(list(X_train['tem']), dtype=torch.float32)
-        y_train_tensor = torch.tensor(list(y_train), dtype=torch.int64)
-        X_test_tensor0 = torch.tensor(list(X_test['input']), dtype=torch.float32)
-        X_test_tensor2 = torch.tensor(list(X_test['tem']), dtype=torch.float32)
-        y_test_tensor = torch.tensor(list(y_test), dtype=torch.int64)
-        train_dataset = Data.TensorDataset(X_train_tensor0, X_train_tensor2, y_train_tensor)
-        train_loader = Data.DataLoader(dataset=train_dataset, batch_size=batch_size, shuffle=True)
-        test_dataset = Data.TensorDataset(X_test_tensor0, X_test_tensor2, y_test_tensor)
-        test_loader = Data.DataLoader(dataset=test_dataset, batch_size=batch_size, shuffle=True)
-        print('get data done')
-        model = Model(targetl,teml,n1,n2)
-        train_model_withT(teml,model,target, train_loader,test_loader,loss_function = loss_function,Ir = Ir,epochs = epochs,withN = withN)
+        model = Model(targetl,n0,n1,n2)
+        acc= train_model_withT(model,target, train_loader,test_loader,teml,add_filter = add_filter,loss_function = loss_function,Ir = Ir,epochs = epochs,withN = withN,dic_list=dic_list)
         print('------------------------------------')
-        topk_acc_withT(teml,model,test_loader,k=3)
+        acc3 = topk_acc_withT(model,test_loader,k=3)
         print('------------------------------------')
-        topk_acc_withT(teml,model,test_loader,k=10)
+        acc10 = topk_acc_withT(model,test_loader,k=10)
         print('------------------------------------')
+        outdic = {'acc':acc,'acc3':acc3,'acc10':acc10}
+        outdic = pd.DataFrame(outdic,index=[0])
+        outdic.to_csv('models/%s_%s_out.csv'%(target,file_name))
     
-
-if __name__ == '__main__':
-    from MLPModel import nnModel0, nnModel1, nnModel2
-    train(Model = nnModel2 ,path = 'data', file_name = '1976-2016_5+',withN = False, target = 'cat', epochs = 1, n1=128, n2=32,Ir = 0.0001,batch_size = 128,loss_function = nn.CrossEntropyLoss(),)
