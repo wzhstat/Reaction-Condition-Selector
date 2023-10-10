@@ -48,7 +48,7 @@ The following files are generated when you run the program: <br>
 
 
 
-```1976-2016_5+.csv```: It contains the data that the template has more than m reactions.<br>
+```1976-2016_m+.csv```: It contains the data that the template has more than m reactions.<br>
 ```classif_by_temp```: The file shows the corresponding reaction for each template.<br>
 ```all_cat_withoutN.csv```, ```all_solv_withN.csv```, ```all_solv_withoutN.csv```, ```all_solv_withN.csv```, ```all_reag_withoutN.csv```, ```all_reag_withN.csv```: These are statistics on reaction conditions.<br>
 
