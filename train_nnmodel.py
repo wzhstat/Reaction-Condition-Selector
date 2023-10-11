@@ -8,7 +8,7 @@ config = {
     'input': 'rfpgen+pfpgen+rxnfp', #['rfpgen+pfpgen','rfpgen+pfpgen+rxnfp','rfpgen+pfpgen+tem'] 
     'target':['cat','solv','reag0','reag1'],
     'withN': False,
-    'epochs': { 'cat': 40, 'solv':10 , 'reag0': 30, 'reag1': 30},
+    'epochs': { 'cat': 1, 'solv':2 , 'reag0': 2, 'reag1': 2},
     'n1': 128,
     'n2': 64,
     'Ir': 0.0001,
@@ -19,7 +19,10 @@ config = {
 
 if __name__ == '__main__':
     if config['condition filter']:
+        print('start to sum the tem reaction conditions')
         TrainModel.sum_tem_condition(config['withN'],config['save_path'],config['data_name'])
+        print('tem reaction conditions sum done')   
+        pass
     for target in config['target']:
         print('start to train %s model'%target)
         TrainModel.train(config['input'],
