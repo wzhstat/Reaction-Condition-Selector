@@ -57,7 +57,7 @@ def get_top_1(add_filter, tem, outputs, target, dlist):
     if add_filter:
         out = []
         for i in range(outputs.size(0)):
-            t_list = eval(dlist[int(tem[i].data)][target])
+            t_list = list(eval(dlist[int(tem[i].data)][target]))
             Max_index = None
             Max = -1000
             for j in range(outputs[i].size(0)):
@@ -178,12 +178,12 @@ def sum_tem_condition(withN, path, file_name):
         for condition in conditions:
             if condition in ['reag0','reag1','reag2']:
                 if data[condition][i] in reag_list:
-                    all_data[tem][condition].add(data[condition][i])
+                    all_data[tem][condition].add(reag_list.index(data[condition][i]))
             else:
                 if data[condition][i] in eval(condition+'_list'):
-                    all_data[tem][condition].add(data[condition][i])
-        all_data = pd.DataFrame(all_data).T
-        all_data.to_csv('%s/temp_condition.csv' % path)
+                    all_data[tem][condition].add(eval(condition+'_list').index(data[condition][i]))
+    all_data = pd.DataFrame(all_data).T
+    all_data.to_csv('%s/temp_condition.csv' % path)
     return all_data
 
 
@@ -599,7 +599,7 @@ def train(
 
 
     elif Model == nnModel2:
-        model = Model(targetl,n0,n1,n2)
+        model = Model(targetl,n0,teml,n1,n2)
         acc= train_model_withT(model,target, train_loader,test_loader,teml,add_filter = add_filter,loss_function = loss_function,Ir = Ir,epochs = epochs,withN = withN,dic_list=dic_list)
         print('------------------------------------')
         acc3 = topk_acc_withT(model,test_loader,k=3)
