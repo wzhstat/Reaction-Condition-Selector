@@ -15,7 +15,7 @@ You can go to https://github.com/connorcoley/rdchiral for more informaton.
 This file is used to process the reaction condition data of USPTO1976-2016, and requires the 1976_Sep2016_USPTOgrants_cm file, which can be downloaded from the following address: https://figshare.com/articles/dataset/Chemical_reactions_from_US_patents_1976-Sep2016_/5104873 <br>
 
 ## Config Settings
-To get the data for training, you can run ```get_data.py```, this  uses only the CPU and takes about 3 hours to run on a laptop. Before runing the program, here are some config you can change:
+To get the data for training, you can run ```get_data.py```, this  uses only the CPU and takes about 3 hours to run on a laptop. Before runing the program, here are some configs that you can change:
 ```
 config = {
     'data_name':'1976-2016',
@@ -67,7 +67,7 @@ This section contains some simple feedforward neural network models with inputs 
 ```nnModel2```: An MLP model with one full connection layer and two highway layers, n1 is 128 by default, This model differs from Model 1 in that its input contains a reaction template in the form of one-hot in addition to the molecular fingerprints of the reactants and products<br>
 
 ## Training 
-To train a model, you can run ```train_nnmodel.py```. Depending on the number of epochs selected, the training time is about 1-10h. Here are some config you can change: <pr>
+To train a model, you can run ```train_nnmodel.py```. Depending on the number of epochs selected, the training time is about 1-10h. Here are some configs that you can change: <pr>
 ```
 config = {
     'data_name':'1976-2016_5+',
