@@ -5,6 +5,7 @@ import csv
 import csv
 import pandas as pd
 from rdkit import Chem
+import sys
 from rdchiral import template_extractor
 from rdkit.Chem.rdChemReactions import RemoveMappingNumbersFromReactions
 csv.field_size_limit(500 * 1024 * 1024)
@@ -296,7 +297,9 @@ def get_m_data(data_name,save_path="./data" ,m = 5):
                 if tem == 'else':
                     continue
                 if n%(lens//1000) == 0:
-                    print(n/((lens//1000)*10),'%')
+                    print("\r", end="")
+                    print("Progress: {}%: ".format(n/((lens//1000)*10)), "▋" * int(n/((lens//1000)*20)), end="")
+                    sys.stdout.flush()
                 go = False
                 for i in eval(classes[tem]):
                     adic = {}
