@@ -66,7 +66,7 @@ def count_data(data_name,save_path = "./data",m1 = 5,mc = 5,ms = 5, mr = 5):
             print("\r", end="")
             print("Progress: {}%: ".format(n/(lens//100)), "▋" * int(0.5*n/(lens//100)), end="")
             sys.stdout.flush()
-            print(n/(lens//100),'%')
+            #print(n/(lens//100),'%')
         
         # Get the data.
         cat = data['cat'][i]
