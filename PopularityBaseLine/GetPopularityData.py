@@ -39,7 +39,9 @@ def get_popularity_data(path = 'data', file_name = '1976-2016'):
                 if tem == 'else':
                     continue
                 if n%378 == 0:
-                    print('已完成:',n/378,'%')
+                    print("\r", end="")
+                    print("Progress: {}%: ".format(n/378), "▋" * int(n/(378*2)), end="")
+                    sys.stdout.flush()
                 n +=1
                 catdic = {'None':0}
                 solvdic = {'None':0}
