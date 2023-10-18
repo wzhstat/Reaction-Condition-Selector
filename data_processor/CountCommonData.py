@@ -1,6 +1,7 @@
 import csv
 import pandas as pd
 from rdkit import Chem
+import sys
 csv.field_size_limit(500 * 1024 * 1024)
 
 
@@ -62,6 +63,9 @@ def count_data(data_name,save_path = "./data",m1 = 5,mc = 5,ms = 5, mr = 5):
     for i in range(lens):
         # Print the progress.
         if n% (lens//100) == 0:
+            print("\r", end="")
+            print("Progress: {}%: ".format(n/(lens//100)), "▋" * int(0.5*n/(lens//100)), end="")
+            sys.stdout.flush()
             print(n/(lens//100),'%')
         
         # Get the data.
