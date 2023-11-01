@@ -110,7 +110,7 @@ config = {
 }
 ```
 ## Training
-You can run ```train.sh``` files directly to get models of cat, solv, and reag0, we recommend using GPUs for faster training. <br>
+You can run ```train.sh``` files directly to get models of cat, solv, and reag0, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
 To train model for a particular condition, take solv for example, you can run:<br>
 ```
 chemprop_train --data_path ./data/GCN_solv_data_withN/GCN_data.csv --dataset_type multiclass --multiclass_num_classes 2973 --save_dir ./data/GCN_solv_withN_checkpoint --explicit_h  --reaction --extra_metrics accuracy top3 --epochs 20
