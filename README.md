@@ -98,4 +98,18 @@ config = {
 This work uses chemprop's model, with only simple changes to the inputs and outputs in some parts.The changed chemprop can download in ```https://github.com/wzhstat/Reaction-Condition-Selector/chemprop```.
 
 ## Data
-The input data learned by the MPNN model has two columns, which are reaction Smarts and the grouping of the target conditions. 
+The input data learned by the MPNN model has two columns, which are reaction Smarts and the grouping of the target conditions. You can get it by running ```get_mpnn_data.py``` ,Here are some configs that you can change: <br>
+```
+config = {
+    "path": "./data",
+    "file_name": '1976-2016_5+',
+    "target": ['cat','solv','reag0'],
+    "conditons": None,
+    "condition_moduel": '',
+    "N": True
+}
+```
+## Training
+You can run ```train.sh``` files directly to get models of cat, solv, and reag0, we recommend using GPUs for faster training. <br>
+To train model for a particular condition, you can run :<br>
+```chemprop_train --data_path ./data/GCN_solv_data_withN/GCN_data.csv --dataset_type multiclass --multiclass_num_classes 2973 --save_dir ./data/GCN_solv_withN_checkpoint --explicit_h  --reaction --extra_metrics accuracy top3 --epochs 20```
