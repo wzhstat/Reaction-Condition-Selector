@@ -1,0 +1,32 @@
+Fold 0
+Model 0 best validation cross_entropy = 1.134681 on epoch 21
+Model 0 test cross_entropy = 1.163316
+Model 0 test accuracy = 0.770025
+Model 0 test top3 = 0.908604
+Ensemble test cross_entropy = 1.163316
+Ensemble test accuracy = 0.770025
+Ensemble test top3 = 0.908604
+1-fold cross validation
+	Seed 0 ==> test cross_entropy = 1.163316
+	Seed 0 ==> test accuracy = 0.770025
+	Seed 0 ==> test top3 = 0.908604
+Overall test cross_entropy = 1.163316 +/- 0.000000
+Overall test accuracy = 0.770025 +/- 0.000000
+Overall test top3 = 0.908604 +/- 0.000000
+Elapsed time = 2:44:03
+Fold 0
+Model 0 best validation cross_entropy = 1.134681 on epoch 21
+Model 0 test cross_entropy = 1.163316
+Model 0 test accuracy = 0.770025
+Model 0 test top3 = 0.908604
+Ensemble test cross_entropy = 1.163316
+Ensemble test accuracy = 0.770025
+Ensemble test top3 = 0.908604
+1-fold cross validation
+	Seed 0 ==> test cross_entropy = 1.163316
+	Seed 0 ==> test accuracy = 0.770025
+	Seed 0 ==> test top3 = 0.908604
+Overall test cross_entropy = 1.163316 +/- 0.000000
+Overall test accuracy = 0.770025 +/- 0.000000
+Overall test top3 = 0.908604 +/- 0.000000
+Elapsed time = 3:16:31
