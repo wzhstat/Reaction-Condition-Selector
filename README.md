@@ -95,7 +95,7 @@ config = {
 * ```Hierarchical prediction```: This variable initiates a hierarchical model training, in which the first trained model variable is added to the next model input. In the example of config, the catalyst information is converted into a 512-dimensional fingerprint input when training the solv model and the catalyst information and solvent information input when training the reag0 model.
 
 # MPNN Models
-This work uses chemprop's model, with only simple changes to the inputs and outputs in some parts. The changed chemprop can download in ```https://github.com/wzhstat/Reaction-Condition-Selector/chemprop```.
+This work uses chemprop's model, with only simple changes to the inputs and outputs in some parts. The changed chemprop can be download in ```https://github.com/wzhstat/Reaction-Condition-Selector/chemprop```.
 
 ## Data
 The input data learned by the MPNN model has two columns, which are reaction Smarts and the grouping of the target conditions. You can get it by running ```get_mpnn_data.py``` ,Here are some configs that you can change: <br>
