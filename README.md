@@ -122,6 +122,6 @@ Cl[S:2]([CH2:5][CH2:6][CH2:7][NH:8][C:9](=[O:11])[CH3:10])(=[O:4])=[O:3].[OH:19]
 You can run ```train.sh``` files directly to get models of cat, solv, and reag0, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
 To train model for a particular condition, take solv for example, you can run:<br>
 ```
-chemprop_train --data_path ./data/GCN_solv_data_withN/GCN_data.csv --dataset_type multiclass --multiclass_num_classes 2973 --save_dir ./data/GCN_solv_withN_checkpoint --explicit_h  --reaction --extra_metrics accuracy top3 --epochs 20
+chemprop_train --data_path ./data/GCN_solv_data_withN/GCN_data.csv --dataset_type multiclass --multiclass_num_classes 2973 --save_dir ./data/GCN_solv_withN_checkpoint --reaction --extra_metrics accuracy top3 --epochs 20
 ```
 
