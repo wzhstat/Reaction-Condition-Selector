@@ -9,6 +9,7 @@ import sys
 from joblib import Parallel, delayed
 import csv
 import os
+import gzip
 csv.field_size_limit(500 * 1024 * 1024)
 
 def open_csv(path:str):
@@ -21,37 +22,31 @@ def open_csv(path:str):
         reader = csv.DictReader(f)
         for classes in reader:
             cat_list = list(classes.keys())
-            print(len(cat_list))
     
     with open('%s/all_cat_withN.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             cat_list_N = list(classes.keys())
-            print(len(cat_list_N))
 
     with open('%s/all_solv_withoutN.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             solv_list = list(classes.keys())
-            print(len(solv_list))
     
     with open('%s/all_solv_withN.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             solv_list_N = list(classes.keys())
-            print(len(solv_list_N))
 
     with open('%s/all_reag_withoutN.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             reag_list = list(classes.keys())
-            print(len(reag_list))
 
     with open('%s/all_reag_withN.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         for classes in reader:
             reag_list_N = list(classes.keys())
-            print(len(reag_list_N))
     return cat_list,cat_list_N,solv_list,solv_list_N,reag_list,reag_list_N 
 
 
@@ -73,10 +68,48 @@ def remove_reagent(Smarts:str):
     pout = '.'.join(outproduct)
     out = rout + '>>' + pout
     return out
-            
 
+def in_list(condition,list):
+    if str(condition) == 'nan':
+        condition = "None"
+    if condition in list:
+        return True
+    else:
+        return False
+def get_index(condition,list):
+    if str(condition) == 'nan':
+        condition = "None"
+    return list.index(condition)
 
-def open_MPNN_data(path: str,file_name: str,target: str,target_list: list, data: pd.DataFrame,condition: list, cat_list,solv_list,reag_list):
+def get_condition_fp(condition_siles:str):
+    '''
+    get condition fp
+    args:
+        condition_siles: condition smiles
+    '''
+    try:
+        m = Chem.MolFromSmiles(condition_siles)
+        fp = np.array(AllChem.GetMorganFingerprintAsBitVect(m, useChirality=True, radius=2, nBits = 512))
+        return fp
+    except Exception as e:
+        return np.zeros(512)
+
+def get_condition_one_hot(condition,list):
+    '''
+    get condition one-hot
+    args:
+        condition: condition
+        list: condition list
+    '''
+    get_one_hot = np.zeros(len(list))
+    if str(condition) == 'nan':
+        condition = "None"
+    if condition in list:
+        one_hot_index = list.index(condition)
+        get_one_hot[one_hot_index] = 1
+    return get_one_hot
+
+def open_MPNN_data(path: str,file_name: str,target: str,target_list: list, data: pd.DataFrame,conditions: list, module: str,):
     '''
     open csv file and get all data for MPNN
     args:
@@ -90,77 +123,64 @@ def open_MPNN_data(path: str,file_name: str,target: str,target_list: list, data:
         solv_list: solv list
         reag_list: reag list
     '''
-    data = data
+    in_lists = Parallel(n_jobs=-1, verbose=4)(delayed(in_list)(condition,target_list) for condition in list(data[target]))
+    data = data[in_lists]
+    MLP_all_data = pd.DataFrame()
     rxnsmile = Parallel(n_jobs=-1, verbose=4)(delayed(remove_reagent)(reaction) for reaction in list(data['reaction']))
-    MLP_all_data = []
+    target_index = Parallel(n_jobs=-1, verbose=4)(delayed(get_index)(condition,target_list) for condition in list(data[target]))
+    MLP_all_data['smarts'] = rxnsmile
+    MLP_all_data['target'] = target_index
     all_condition_list = []
-    l = len(rxnsmile)
-    for i in range(l):
-        if i % (l//100) == 0:
-            print("\r", end="")
-            print("Progress: {}%: ".format(i/(l//100)), "▋" * int(i/(l//50)), end="")
-            sys.stdout.flush()
-        dic = {}
-        if data[target][i] is np.nan:
-            titem = 'None'
-        else:
-            titem = data[target][i]
-        if titem not in target_list:
-            continue
-        dic['smarts'] = rxnsmile[i]
-        dic[target] = target_list.index(titem)
-        condition_list = []
-        if condition != None:
-            for conditions in condition:
-                get_one_hot = np.zeros(len(eval('%s_list'%conditions)))
-                if data[conditions][i] is np.nan:
-                    citem = 'None'
+    if conditions != None:
+        _,cat_list,_,solv_list,_,reag_list = open_csv(path)
+        if module == 'one-hot':
+            all_condition_list = []
+            for condition in conditions:
+                if condition in ['cat','solv']:
+                    condition_lists = eval('%s_list'%condition)
                 else:
-                    citem = data[conditions][i]
-                if citem in eval('%s_list'%conditions):
-                    one_hot_index = eval('%s_list'%conditions).index(citem)
-                    get_one_hot[one_hot_index] = 1
-                condition_list.append(get_one_hot)
-            if len(condition_list) == 0:
-                continue
-            if len(condition_list) > 1:
-                ohc = np.concatenate(condition_list)
-            else:
-                ohc = condition_list[0]
-            all_condition_list.append(ohc)
-        MLP_all_data.append(dic)
-    condition_np = np.array(all_condition_list)
-    return MLP_all_data,condition_np
+                    condition_lists = reag_list
+                condition_list = Parallel(n_jobs=-1, verbose=4)(delayed(get_condition_one_hot)(condition,condition_lists) for condition in list(data[condition]))
+                all_condition_list.append(condition_list)
+            all_condition_list = [[clist[i] for clist in all_condition_list] for i in range(len(all_condition_list[0]))]
+            all_condition_list = [np.concatenate(clist) for clist in all_condition_list]
+        elif module == 'fp':
+            all_condition_list = []
+            for condition in conditions:
+                condition_list = Parallel(n_jobs=-1, verbose=4)(delayed(get_condition_fp)(condition) for condition in list(data[condition]))
+                all_condition_list.append(condition_list)
+            all_condition_list = [[clist[i] for clist in all_condition_list] for i in range(len(all_condition_list[0]))]
+            all_condition_list = [np.concatenate(clist) for clist in all_condition_list]
+    return MLP_all_data,all_condition_list
 
-def save_MPNN_csv(path,condition,MLP_all_data,condition_np,target,N):
+
+
+def save_MPNN_csv(path,conditions,features,MLP_all_data,module,target,N):
     '''
     save data to csv file
     args:
         path: save path
         condition: condition that is used for MPNN
-        MLP_all_data: all data
-        condition_np: condition data
+        MLP_all_data: all data 
         target: target name
         N: whether to use N
     '''
-    if condition == None:
-        header = ['smarts',target]
-    else:
-        header = ['smarts',target]
-        condition_header = [','.join(condition)]
+    header = ['smarts','target']
+    data_name = "GCN_data.csv"
     if N:
         path = '%s/GCN_%s_data_withN'%(path,target)
     else:
         path = '%s/GCN_%s_data_withoutN'%(path,target)
-    os.mkdir(path)
-    with open(path+"/GCN_data.csv",'w',newline='') as f:
-        f_csv = csv.DictWriter(f,header,extrasaction='ignore')
-        f_csv.writeheader()
-        f_csv.writerows(MLP_all_data)
-    if condition != None:
-        np.save(path+"/condition.npy",condition_np)
+    if os.path.exists(path):
+        pass
+    else:
+        os.mkdir(path)
+    MLP_all_data.to_csv(path+"/%s"%(data_name), mode='a', index=False,header=header)
+    if conditions != None:
+        features = np.array(features)
+        np.savez_compressed(path+"/%s.npz"%('+'.join(conditions)+module), features=features)
 
-def get_GCNN_data(path: str, file_name: str, target: str, conditons: list, N: bool = False):
+def get_GCNN_data(path: str, file_name: str, target: str, conditons: list, condition_moduel: str = '', N: bool = False):
     '''
     get data for GCNN
     args:
@@ -177,20 +197,24 @@ def get_GCNN_data(path: str, file_name: str, target: str, conditons: list, N: bo
             target_list = eval('%s_list_N'%target)
         else:
             target_list = reag_list_N
-        data,cat_list,solv_list,reag_list = data,cat_list_N,solv_list_N,reag_list_N
     else:
         if target in ['cat','solv']:
             target_list = eval('%s_list'%target)
         else:
             target_list = reag_list
-        data,cat_list,solv_list,reag_list = data,cat_list,solv_list,reag_list
-    MLP_all_data,condition_np = open_MPNN_data(path,file_name,target,target_list,data,conditons,cat_list,solv_list,reag_list)
-    save_MPNN_csv(path,conditons,MLP_all_data,condition_np,target,N)
+    MLP_all_data,features= open_MPNN_data(path,file_name,target,target_list,data,conditons,condition_moduel)
+    save_MPNN_csv(path,conditons,features,MLP_all_data,condition_moduel,target,N)
 
 if __name__ == '__main__':
     get_GCNN_data('./data','1976-2016_5+','cat',None,N=True)
-    get_GCNN_data('./data','1976-2016_5+','solv',['cat'],N=True)
-    get_GCNN_data('./data','1976-2016_5+','reag0',['cat','solv'],N=True)
-
+    get_GCNN_data('./data','1976-2016_5+','cat',None)
+    get_GCNN_data('./data','1976-2016_5+','solv',['cat'],'fp',N=True)
+    get_GCNN_data('./data','1976-2016_5+','solv',['cat'],'fp')
+    get_GCNN_data('./data','1976-2016_5+','reag0',['cat','solv'],'fp',N=True)
+    get_GCNN_data('./data','1976-2016_5+','reag0',['cat','solv'],'fp')
+    get_GCNN_data('./data','1976-2016_5+','solv',['cat'],'one-hot',N=True)
+    get_GCNN_data('./data','1976-2016_5+','solv',['cat'],'one-hot')
+    get_GCNN_data('./data','1976-2016_5+','reag0',['cat'],'one-hot',N=True)
+    get_GCNN_data('./data','1976-2016_5+','reag0',['cat'],'one-hot')
 
     
