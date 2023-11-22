@@ -340,7 +340,6 @@ def get_m_data(data_name,save_path="./data" ,m = 5):
                     
                     
     all_data = pd.DataFrame(all_data)
-    print(all_data)
-    print(len(all_data))
+    all_data.drop_duplicates(inplace=True)
     all_data.to_csv(out_path)
     print('done')
