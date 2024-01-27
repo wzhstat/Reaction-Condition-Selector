@@ -17,7 +17,7 @@ This file is used to process the reaction condition data of USPTO1976-2016, and 
 ## Config Settings
 To get the data for training, you can run ```get_data.py```, this  uses only the CPU and takes about 6 hours to run on a laptop. 
 ```
-python get_data.py --data_name USPTO --data_path datapath --save_path ./data/
+python get_data.py --data_name USPTO --data_path ./data/grants --save_path ./data
 ```
 Before runing the program, here are some configs that you can change:
 * ```data_name```: Is the name of the data.
