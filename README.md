@@ -1,4 +1,4 @@
-![image](https://github.com/wzhstat/Reaction-Condition-Selector/assets/139463921/b8a540f7-a477-4300-881a-2e3e6ad28af8)# Reaction-Condition-Selector
+# Reaction-Condition-Selector
 This repository contains a reaction condition selector.
 
 # Python Version
