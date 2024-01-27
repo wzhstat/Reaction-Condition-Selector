@@ -33,11 +33,14 @@ Before runing the program, here are some configs that you can change:
 The following files are generated when you run the program: <br>
 ```1976-2016.csv```: It contains information extracted directly from the USPTO data set, includes *id*, *reaction*, *products*, *reactants*, *reagent*, *catalyst*, *solvent*. Reaction is stored in Smart format, products, reactants, reagent, catalyst and solvent are stored in list form.<br>
 
-   	_id	source	reaction	products	reactants	reagent	catalyst	solvent
+```
+	_id	source	reaction	products	reactants	reagent	catalyst	solvent
 0	1	US03930836	[Br:1][CH2:2][CH2:3][OH:4].[CH2:5]([S:7](Cl)(=[O:9])=[O:8])[CH3:6].CCOCC>C(N(CC)CC)C>[CH2:5]([S:7]([O:4][CH2:3][CH2:2][Br:1])(=[O:9])=[O:8])[CH3:6]	['C(C)S(=O)(=O)OCCBr']	['BrCCO', 'C(C)S(=O)(=O)Cl']	['CCOCC']	None	['C(C)N(CC)CC']
 1	2	US03930836	[Br:1][CH2:2][CH2:3][CH2:4][OH:5].[CH3:6][S:7](Cl)(=[O:9])=[O:8].CCOCC>C(N(CC)CC)C>[CH3:6][S:7]([O:5][CH2:4][CH2:3][CH2:2][Br:1])(=[O:9])=[O:8]	['CS(=O)(=O)OCCCBr']	['BrCCCO', 'CS(=O)(=O)Cl']	['CCOCC']	None	['C(C)N(CC)CC']
 2	3	US03930836	[CH2:1]([Cl:4])[CH2:2][OH:3].CCOCC.[CH2:10]([S:14](Cl)(=[O:16])=[O:15])[CH:11]([CH3:13])[CH3:12]>C(N(CC)CC)C>[CH2:10]([S:14]([O:3][CH2:2][CH2:1][Cl:4])(=[O:16])=[O:15])[CH:11]([CH3:13])[CH3:12]	['C(C(C)C)S(=O)(=O)OCCCl']	['C(CO)Cl', 'C(C(C)C)S(=O)(=O)Cl']	['CCOCC']	None	['C(C)N(CC)CC']
 6	7	US03930837	[Cl:1][C:2]1[N:3]=[CH:4][C:5]2[C:10]([CH:11]=1)=[C:9]([N+:12]([O-])=O)[CH:8]=[CH:7][CH:6]=2.O.[OH-].[Na+]>C(O)(=O)C.[Fe]>[Cl:1][C:2]1[N:3]=[CH:4][C:5]2[C:10]([CH:11]=1)=[C:9]([NH2:12])[CH:8]=[CH:7][CH:6]=2	['ClC=1N=CC2=CC=CC(=C2C1)N']	['ClC=1N=CC2=CC=CC(=C2C1)[N+](=O)[O-]']	['O', '[OH-].[Na+]']	['[Fe]', '[Fe]']	['C(C)(=O)O']
+
+```
 
 
 
