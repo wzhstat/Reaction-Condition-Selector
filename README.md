@@ -119,3 +119,6 @@ To train model for a particular condition, take solv0 for example, you can run:<
 chemprop_train --data_path ./data/GCN_solv0_data_withN/GCN_data_train.csv --separate_val_path ./data/GCN_solv0_data_withN/GCN_data_val.csv --separate_test_path ./data/GCN_solv0_data_withN/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 697 --save_dir ./data/models/GCN_solv0_withN  --reaction --extra_metrics accuracy top3 --epochs 35
 ```
 
+# Condition Classifier
+
+
