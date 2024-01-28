@@ -1,5 +1,5 @@
 from DataProcessor import extract_data, count_common_data, get_tem
-from condition_classifier import get_temp_condition
+from ConditionClassifier import get_temp_condition
 import time
 import argparse
 import pandas as pd
