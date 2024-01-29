@@ -63,12 +63,12 @@ Cl[S:2]([CH2:5][CH2:6][CH2:7][NH:8][C:9](=[O:11])[CH3:10])(=[O:4])=[O:3].[OH:19]
 ```
 
 ## Training
-You can run ```train.sh``` files directly to get models of cat, solv, and reag0, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
+You can run ```train.sh``` files directly to get models of catalyst, solvent, and reagent, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
 To train model for a particular condition, take solv0 for example, you can run:<br>
 ```
 chemprop_train --data_path ./data/GCN_solv0_data_withN/GCN_data_train.csv --separate_val_path ./data/GCN_solv0_data_withN/GCN_data_val.csv --separate_test_path ./data/GCN_solv0_data_withN/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 697 --save_dir ./data/models/GCN_solv0_withN  --reaction --extra_metrics accuracy top3 --epochs 35
 ```
-It takes a while to train these models, and we also provide trained checkpoints.<br>
+
 
 ## Predicting
 You can run ```predction.sh```to get the raw prediction of the test dataset, which will generate a ```raw_prediction``` folder.
