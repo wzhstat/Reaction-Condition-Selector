@@ -71,7 +71,7 @@ chemprop_train --data_path ./data/GCN_solv0_data_withN/GCN_data_train.csv --sepa
 It takes a while to train these models, and we also provide trained checkpoints.<br>
 
 ## Predicting
-You can run ```predction.sh```to get the raw prediction of the test dataset.
+You can run ```predction.sh```to get the raw prediction of the test dataset, which will generate a ```raw_prediction``` folder.
 
 # Condition Classifier
 Run ```class_conditions.py``` and it calculates the reaction conditions under each template and clusters them. The files obtained by clustering are also used as candidate libraries for subsequent predictions:
