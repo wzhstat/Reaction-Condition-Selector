@@ -88,7 +88,7 @@ To perform the conditional prediction task, we need the following files: <br>
 ```dMPNN checkpoints```: A trained dMPNN scoring model is used to score each component in a reaction condition.<br>
 ```classed_conditions_library.json```: The reaction Condition library is extracted from the training data set, and the responses under each template are clustered using Condition Cluster. This file is used to provide a candidate list for conditional predictions.<br>
 ```Condition keys```: Contains three CSV files for decoding the predicted catalyst, solvent, and reagent.<br>
-These files can be found in the model file.<br>
+These files can be found in the ```model``` file.<br>
 
 ## Predicting
 The file that predicts the input should contain at least two parts, one reflecting the mapped smiles and the other its corresponding template.<br>
