@@ -87,8 +87,45 @@ It will eventually output a json file```classed_condition_list.json```.
 To perform the conditional prediction task, we need the following files: <br>
 ```dMPNN checkpoints```: A trained dMPNN scoring model is used to score each component in a reaction condition.<br>
 ```classed_conditions_library.json```: The reaction Condition library is extracted from the training data set, and the responses under each template are clustered using Condition Cluster. This file is used to provide a candidate list for conditional predictions.<br>
-```Condition keys```: Contains three CSV files for decoding the predicted catalyst, solvent, and reagent.
-These files can be found in the model file.
+```Condition keys```: Contains three CSV files for decoding the predicted catalyst, solvent, and reagent.<br>
+These files can be found in the model file.<br>
 
 ## Predicting
+The file that predicts the input should contain at least two parts, one reflecting the mapped smiles and the other its corresponding template.<br>
+```
+_id,Mapped,Reaction,template
+65986967, [CH3:1][O:2][C:3]1=[CH:4][CH:5]=[C:6]([CH:9]=O)[CH:7]=[CH:8]1.[H][C@@:11]([NH2:10])([CH2:12][C:13]1=[CH:14][NH:15][C:16]2=[C:21]1[CH:20]=[CH:19][CH:18]=[CH:17]2)[C:22]([OH:23])=[O:24]>>[CH3:1][O:2][C:3]1=[CH:4][CH:5]=[C:6]([CH:9]2[NH:10][CH:11]([C:22]([OH:23])=[O:24])[CH2:12][C:13]3=[C:14]2[NH:15][C:16]2=[CH:17][CH:18]=[CH:19][CH:20]=[C:21]32)[CH:7]=[CH:8]1, [CH;D3;+0:2]-[NH;D2;+0:3]-[CH;D3;+0:1]-[c;H0;D3;+0:4]>>O=[CH;D2;+0:1].[C@H;D3;+0:2]-[NH2;D1;+0:3].[cH;D2;+0:4]
+45394169, [CH3:1][OH:2].[CH3:23][O:22][C:21]1=[CH:20][CH:19]=[C:18]([CH:16]2[NH:17][CH:5]([C:3](O)=[O:4])[CH2:6][C:7]3=[C:8]2[NH:9][C:10]2=[CH:11][CH:12]=[CH:13][CH:14]=[C:15]32)[CH:25]=[CH:24]1>>[CH3:1][O:2][C:3](=[O:4])[CH:5]1[CH2:6][C:7]2=[C:8]([NH:9][C:10]3=[CH:11][CH:12]=[CH:13][CH:14]=[C:15]23)[CH:16]([C:18]2=[CH:19][CH:20]=[C:21]([O:22][CH3:23])[CH:24]=[CH:25]2)[NH:17]1, [C;H0;D3;+0:1]-[O;H0;D2;+0:2]>>O-[C;H0;D3;+0:1].[OH;D1;+0:2]
+2729754, [CH3:1][O:2][C:3](=[O:4])[CH:5]1[CH2:6][C:7]2=[C:8]([NH:9][C:10]3=[CH:11][CH:12]=[CH:13][CH:14]=[C:15]23)[CH:16]([C:18]2=[CH:19][CH:20]=[C:21]([O:22][CH3:23])[CH:24]=[CH:25]2)[NH:17]1>>[CH3:1][O:2][C:3](=[O:4])[C:5]1=[CH:6][C:7]2=[C:8]([NH:9][C:10]3=[CH:11][CH:12]=[CH:13][CH:14]=[C:15]23)[C:16]([C:18]2=[CH:19][CH:20]=[C:21]([O:22][CH3:23])[CH:24]=[CH:25]2)=[N:17]1, [c;H0;D3;+0:5]-[c;H0;D3;+0:4]:[n;H0;D2;+0:3]:[c;H0;D3;+0:2]:[cH;D2;+0:1]>>[CH2;D2;+0:1]-[CH;D3;+0:2]-[NH;D2;+0:3]-[CH;D3;+0:4]-[c;H0;D3;+0:5]
+28172530, CO[C:22](=[O:23])[C:11]1=[CH:12][C:13]2=[C:14]([NH:15][C:16]3=[CH:17][CH:18]=[CH:19][CH:20]=[C:21]23)[C:9]([C:6]2=[CH:5][CH:4]=[C:3]([O:2][CH3:1])[CH:8]=[CH:7]2)=[N:10]1>>[CH3:1][O:2][C:3]1=[CH:4][CH:5]=[C:6]([C:9]2=[N:10][C:11]([C:22](=[O:23])[NH:24][NH2:25])=[CH:12][C:13]3=[C:14]2[NH:15][C:16]2=[CH:17][CH:18]=[CH:19][CH:20]=[C:21]32)[CH:7]=[CH:8]1, [C;H0;D3;+0:1]>>C-O-[C;H0;D3;+0:1]
+```
+You can make predictions by running the corresponding ```prediction.py``` directly, the specific use case is as follows:<br>
+```
+python ./prediction.sh --test_path ./data/test_data.csv --model_path ./data/model/MPNN_models --key_path ./data/model/keys --library_path ./data/model/classed_conditions_library.json --save_path ./data/condition_pred.json
+```
+You'll end up with a json file that contains predictions for reaction conditions by category:
+```
+class id: 50_4
+class label [[], ['phosphine', 'halide']]
+best condition: ['None', 'None', 'None', 'BrP(Br)Br', 'None', 'None']
+score: 0.43502089128291327
+condition score: [["['None', 'None', 'None', 'BrP(Br)Br', 'None', 'None']", 0.43502089128291327], ["['None', 'None', 'None', 'O=P(Br)(Br)Br', 'None', 'None']", 0.4005131881456007], ["['None', 'CN(C)C=O', 'None', 'BrP(Br)Br', 'None', 'None']", 0.02543110079025514], ["['None', 'CN(C)C=O', 'None', 'O=P(Br)(Br)Br', 'None', 'None']", 0.023413797956965517]... ["['None', 'None', 'None', 'CCOC(C)=O.O=C([O-])O.[Na+]', 'O=P(Cl)(Cl)Cl', 'None']", 6.239001680815093e-37]]
+--------------------------------------------
+class id: 50_5
+class label [[], ['halide', 'aldehyde', 'amine']]
+best condition: ['None', 'CN(C)C=O', 'None', 'O=S(Cl)Cl', 'None', 'None']
+score: 5.219886261475779e-09
+condition score: [["['None', 'CN(C)C=O', 'None', 'O=S(Cl)Cl', 'None', 'None']", 6.458456286464104e-14], ["['None', 'None', 'None', 'CN(C)C=O', 'O=S(Cl)Cl', 'None']", 1.2491413029613758e-18], ["['None', 'ClCCl', 'None', 'CN(C)C=O', 'O=S(Cl)Cl', 'None']", 7.428030276709379e-22], ["['None', 'Cc1ccccc1', 'None', 'CN(C)C=O', 'O=S(Cl)Cl', 'None']", 3.421287350994334e-22], ["['None', 'ClCCl', 'None', 'CN(C)C=O', 'O=C(Cl)C(=O)Cl', 'None']", 1.1259136045695308e-23],...["['None', 'CN(C)C=O', 'None', 'O=C(Cl)C(=O)Cl', 'None', 'None']", 7.935796084468542e-26], ["['None', 'CN(C)C=O', 'None', 'CCN(C=O)CC', 'O=S(Cl)Cl', 'None']", 4.955859832749846e-32]]
+
+...
+
+--------------------------------------------
+class id: 50_0
+class label [['ionic'], ['phosphine', 'halide']]
+best condition: ['C[N+](C)(C)C.[Cl-]', 'None', 'None', 'O=P(Cl)(Cl)Cl', 'None', 'None']
+score: 9.45609355368023e-28
+condition score: [["['C[N+](C)(C)C.[Cl-]', 'None', 'None', 'O=P(Cl)(Cl)Cl', 'None', 'None']", 9.45609355368023e-28], ["['CC[N+](CC)(CC)CC.[Cl-]', 'CC#N', 'None', 'CN(C)c1ccccc1', 'O=P(Cl)(Cl)Cl', 'None']", 4.047334473315928e-40]]
+```
+
+
 
