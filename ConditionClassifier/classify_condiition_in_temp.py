@@ -17,26 +17,26 @@ def Categorization_conditions(condition:str):
                     'alkyne':['[CX2:1]#[CX2:2]'],
                     'alcohol':['[CX4:1][OX2H]'],
                     'ether':['[CX4:1][OX2][CX4:2]'],
-                    'aldehyde':['[CX3H1:1][CX3H1](=[OX1])[#6:2]'],
-                    'ketone':['[CX3H1:1][CX3H1](=[OX1])[#6:2]'],
+                    'aldehyde':['[CX3H1:1]=[OX1:2]','[CX3H2:1]=[OX1:2]'],
+                    'ketone':['[#6][CX3H0:1](=[OX1])[#6]'],
                     'carboxylic acid':['[!O:1][CX3:2](=[OX1])[OX2H1:3]'],
                     'ester':['[CX3:1](=[OX1])[OX2H0:2]'],
                     'amide':['[CX3:1](=[OX1])[NX3H2:2]'],
-                    'nitro':['[NX3:1](=[OX1])(=[OX1])[OX2:2]'],
+                    'nitro':['[CX4:1][N+]([O-])=O'],
                     'amine':['[NX3:1]','[n]'],
                     'halide':['[F;H0;X1]','[Cl;H0;X1]','[Br;H0;X1]', '[I;H0;X1]'],
                     'acid chloride':['[CX3:1](=[OX1])[Cl,Br,I:2]'],
-                    'anhydride':['[CX3:1](=[OX1])[OX2:2][CX3:3](=[OX1])[OX2:4]'],
-                    'nitrile':['[NX1-:1]#[CX2+0:2]'],
+                    'anhydride':['[CX3:1](=[OX1])[OX2:2][CX3:3](=[OX1])'],
+                    'nitrile':['[NX1:1]#[CX2+0:2]'],
                     'aromatic':['a'],
                     'sulfone/sulfoxide':['[SX4](=[OX1])(=[OX1])','[SX3](=[OX1])'],
                     'phosphine' : ['[PX3]','[PX4]','[PX5]','[PX6]'],
                     'transition metal':['[#21,#22,#23,#24,#25,#26,#27,#28,#29,#30,#39,#40,#41,#42,#44,#45,#46,#47,#48,#72,#73,#74,#75,#76,#77,#78,#79,#80,#104,#105,#106,#107,#108,#109,#110,#111,#112]'],
                     'reducing metal':['[#3,#4,#11,#12,#13,#19,#20,#30,#26;+0]'],
                     'Main group metal':['[#13,#31,#49,#81,#50,#82,#83;+0,+1]'],
-                    'Metal oxidizer':['[Cr+6]','[Mn+7]','[Mn+4]','[Ce+4]','[Pb+4]'],
+                    'Metal oxidizer':['[Cr+6]','[Mn+7]','[Mn+4]','[Ce+4]','[Pb+4]','[I+3]','O[N+]([O-])=O'],
                     'reductant':['[H-]','[BH4-]','[AlH4-]','[NaH]','[LiH]','[BH3]','[BH2]','[BH]','[AlH3]','[AlH2]','[AlH]'],
-                    'acid':['[ClH1,BrH1,IH1:1]','O=S(=O)(O)O','O=C(O)C(F)(F)F','[CX3:1](=[OX1])[OX2H1:2]'],
+                    'acid':['[ClH1,BrH1,IH1:1]','O=S(=O)(O)O','O=C(O)C(F)(F)F','O[N+]([O-])=O','[CX3:1](=[OX1])[OX2H1:2]'],
                     'lewis acid':['[AlX3:1][F,Cl,Br,I,C:2]','[BX3:1][F,Cl,Br,I,H:2]','[Al+3]','[Ti+4]','[Zn+2]','[ZnX2:1][Cl,Br,I:2]','[Si+4]','[Fe+3]','[FeX3:1][Cl,Br,F:2]','[Ge+4]','[Sn+4]','[Ce+4]'],
                     'metal alkyl':['[CX4:1][Mg,Al,Zn,Li:2]'],
                     'silane':['[SiX4:1][#6:2]'],
@@ -95,37 +95,41 @@ def get_labeled_condition(test_list):
         ])
     return out_list
 
+
 def ismach(list1,list2,num:int = 2):
     solv_reag1 = list1[1]+list1[2]
+    solv_reag2 = list2[1]
+    if ((set(list1[0][0])&set(list2[0]) != set() or list1[0][0]==list2[0]) and (len(set(reduce(add,solv_reag1))&set(solv_reag2))>=num or (set(reduce(add,solv_reag1))==set(solv_reag2)))):
+        return True
+    return False
+
+    
+def same_class(list1,list2,num:int = 2):
+    solv_reag1 = list1[1]+list1[2]
     solv_reag2 = list2[1]+list2[2]
-    if str(list2) != '[[], [], []]' and ((set(list1[0][0])&set(list2[0]) != set() or list1[0][0]==list2[0]) and (len(set(reduce(add,solv_reag1))&set(solv_reag2))>=num or (set(reduce(add,solv_reag1))&set(solv_reag2)==set(solv_reag2) and set(solv_reag2) !=set()))):
+    if ((set(list1[0][0])&set(list2[0][0]) != set() or list1[0][0]==list2[0][0]) and (len(set(reduce(add,solv_reag1))&set(reduce(add,solv_reag2)))>=num or (set(reduce(add,solv_reag1))==set(reduce(add,solv_reag2))))):
         return True
     return False
 
 def how_mach(list1,list2):
     solv_reag1 = list1[1]+list1[2]
-    solv_reag2 = list2[1]+list2[2]
-    return len(set(list1[0][0])&set(list2[0]))/max(len(set(list2[0])),1)+len(set(reduce(add,solv_reag1))&set(solv_reag2))/max(len(set(solv_reag2)),1)
+    solv_reag2 = list2[1]
+    return len(set(list1[0][0])&set(list2[0]))*1.1+len(set(reduce(add,solv_reag1))&set(solv_reag2))
 
 def update_class_label(condition_label, args):
-    cat_labels, solv_labels, reag_labels = [], [], []
+    cat_labels, solv_reag_labels = [], []
     for i in condition_label:
         cat_labels += i[0][0]
-        solv_labels += reduce(add,i[1])
-        reag_labels += reduce(add,i[2])
+        solv_reag_labels += list(set(reduce(add,i[1]+i[2])))
     cat_count = Counter(cat_labels)
-    solv_count = Counter(solv_labels)
-    reag_count = Counter(reag_labels)
-    out = [[],[],[]]
+    solv_reag_count = Counter(solv_reag_labels)
+    out = [[],[]]
     for i in cat_count:
         if cat_count[i] > args.Inclusion*len(condition_label):
             out[0].append(i)
-    for i in solv_count:
-        if solv_count[i] > args.Inclusion*len(condition_label):
+    for i in solv_reag_count:
+        if solv_reag_count[i] > args.Inclusion*len(condition_label):
             out[1].append(i)
-    for i in reag_count:
-        if reag_count[i] > args.Inclusion*len(condition_label):
-            out[2].append(i)
     return out
 
 
@@ -263,20 +267,10 @@ def Classify_reaction_conditions(test_list,tem,smart,args):
             encoded_conditions = encode_condition(test_list[i]['conditions'],cat_list,solv_list,reag_list)
         except:
             print('___________________________________________________________')
-        out_list.append({'tem':str(tem),'tem_smart':smart,'class_id':str(tem)+'_%s'%i,'class_label':test_list[i]['class_label'],'conditions':test_list[i]['conditions'],'encoded_conditions':encoded_conditions})
+        out_list.append({'tpl':str(tem),'tpl_smart':smart,'class_id':str(tem)+'_%s'%i,'class_label':test_list[i]['class_label'],'conditions':test_list[i]['conditions'],'encoded_conditions':encoded_conditions})
     return out_list
 
 
 
 if __name__ == '__main__':
-    '''
-    condition_list = get_tem_condition('data')
-    classed_condition_list = list(Parallel(n_jobs=-1)(delayed(Classify_reaction_conditions)(sorted(condition_list['conditions'][i]),condition_list['tem'][i],condition_list['tem_smart'][i]) for i in range(len(condition_list))))
-    with open('data/classed_condition_list.json','w') as f:
-        json.dump(classed_condition_list,f)
-    '''
     pass
-
-
-    
-    
