@@ -73,7 +73,7 @@ chemprop_train --data_path ./data/GCN_solv0_data_withN/GCN_data_train.csv --sepa
 ## Predicting
 You can run ```predction.sh```to get the raw prediction of the test dataset, which will generate a ```raw_prediction``` folder.
 
-# Condition Classifier
+# Condition Clusterer
 Run ```class_conditions.py``` and it calculates the reaction conditions under each template and clusters them. The files obtained by clustering are also used as candidate libraries for subsequent predictions:
 ```
 python class_conditions.py --Inclusion 0.9 --data_set train
@@ -82,5 +82,13 @@ python class_conditions.py --Inclusion 0.9 --data_set train
 ```data_set```data_set is the data set to be collected. In addition to train, test, val, you can also select all.<br>
 It will eventually output a json file```classed_condition_list.json```.
 
+# Using trained model to make predictions
+## Files required for the task
+To perform the conditional prediction task, we need the following files: <br>
+```dMPNN checkpoints```: A trained dMPNN scoring model is used to score each component in a reaction condition.<br>
+```classed_conditions_library.json```: The reaction Condition library is extracted from the training data set, and the responses under each template are clustered using Condition Cluster. This file is used to provide a candidate list for conditional predictions.<br>
+```Condition keys```: Contains three CSV files for decoding the predicted catalyst, solvent, and reagent.
+These files can be found in the model file.
 
+## Predicting
 
