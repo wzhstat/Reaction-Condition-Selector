@@ -323,7 +323,7 @@ def merge_same_lable_candidate(candidate_range):
                     i.conditions += candidate.conditions
     return out
 
-def get_candidate_range(target_temp,classed_conditions_library):
+def get_candidate_range(args,target_temp,classed_conditions_library):
     adic = {}
     for i in list(classed_conditions_library.keys()):
         try:
@@ -335,7 +335,7 @@ def get_candidate_range(target_temp,classed_conditions_library):
     adic = sorted(adic.items(), key=lambda x:x[1],reverse=True)
 
     candidate_range = []
-    for j in adic[:10]:
+    for j in adic[:args.Adjacen]:
         for condition_class in classed_conditions_library[j[0]]:
             if condition_class['class_label'] == [[], []]:
                 continue
@@ -349,8 +349,8 @@ def get_candidate_range(target_temp,classed_conditions_library):
     candidate_range = merge_same_lable_candidate(candidate_range)
     return candidate_range
 
-def condition_selector(temp:str,pred:list,classed_conditions_library:list,condition_key:list):
-    candidate_range = get_candidate_range(temp,classed_conditions_library)
+def condition_selector(args, temp:str,pred:list,classed_conditions_library:list,condition_key:list):
+    candidate_range = get_candidate_range(args,temp,classed_conditions_library)
     candidate_range = get_condition_score(candidate_range,pred,condition_key)
     return candidate_range
 
@@ -382,7 +382,7 @@ def Prediction(args):
     
     # Get condition clusters prediction
     print(len(list(MPNN_pred['cat'][0][0])),len(list(MPNN_pred['solv0'][0][0])),len(list(MPNN_pred['solv1'][0][0])),len(list(MPNN_pred['reag0'][0][0])),len(list(MPNN_pred['reag1'][0][0])),len(list(MPNN_pred['reag2'][0][0])))
-    condition_pred = Parallel(n_jobs=-1,verbose=4)(delayed(condition_selector)(template[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library,condition_key) for i in range(test_data.shape[0]))
+    condition_pred = Parallel(n_jobs=-1,verbose=4)(delayed(condition_selector)(args,template[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library,condition_key) for i in range(test_data.shape[0]))
 
     # Save
     with open('%s'%args.save_path,'w') as f:
@@ -397,5 +397,6 @@ if __name__ == '__main__':
     parser.add_argument('--key_path', type=str, default='./data/model/keys', help='path to condition keys')
     parser.add_argument('--library_path', type=str, default='./data/model/classed_conditions_library.json', help='path to classed conditions library')
     parser.add_argument('--save_path', type=str, default='./data/condition_pred.json', help='path to save condition prediction')
+    parser.add_argument('--Adjacen', type=int, default=10, help='number of adjacent templates to consider')
     args = parser.parse_args()
     Prediction(args)
