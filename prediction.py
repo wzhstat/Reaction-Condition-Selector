@@ -301,6 +301,8 @@ def get_condition_key(path:str):
 
 
 def get_condition_score(candidate_range,pred,condition_key):
+    if len(candidate_range) == 0:
+        return []
     condition_pre = [] 
     for candidate in candidate_range:
         candidate.get_condition_score(pred,condition_key)
@@ -323,36 +325,53 @@ def merge_same_lable_candidate(candidate_range):
                     i.conditions += candidate.conditions
     return out
 
-def get_candidate_range(args,target_temp,classed_conditions_library):
-    adic = {}
-    for i in list(classed_conditions_library.keys()):
-        try:
-            class_temp = i
-        except:
-            continue
-        score = cal_temp_similarity(target_temp,class_temp)
-        adic[i] = score
-    adic = sorted(adic.items(), key=lambda x:x[1],reverse=True)
-
-    candidate_range = []
-    for j in adic[:args.Adjacen]:
-        for condition_class in classed_conditions_library[j[0]]:
+def get_candidate_range(args,target_temp):
+    if args.Adjacen == 0:
+        candidate_range = []
+        for condition_class in classed_conditions_library[target_temp]:
             if condition_class['class_label'] == [[], []]:
                 continue
             else:
                 candidate = condition_candidate()
                 candidate.get_class_id(condition_class['class_id'])
-                candidate.get_temp_similarity(float(j[1]))
+                candidate.get_temp_similarity(1)
                 candidate.get_class_label(condition_class['class_label'])
                 candidate.get_conditions(condition_class['encoded_conditions'])
                 candidate_range.append(candidate)
-    candidate_range = merge_same_lable_candidate(candidate_range)
-    return candidate_range
+        return candidate_range
+    else:
+        adic = {}
+        for i in list(classed_conditions_library.keys()):
+            try:
+                class_temp = i
+            except:
+                continue
+            score = cal_temp_similarity(target_temp,class_temp)
+            adic[i] = score
+        adic = sorted(adic.items(), key=lambda x:x[1],reverse=True)
 
-def condition_selector(args, temp:str,pred:list,classed_conditions_library:list,condition_key:list):
-    candidate_range = get_candidate_range(args,temp,classed_conditions_library)
-    candidate_range = get_condition_score(candidate_range,pred,condition_key)
-    return candidate_range
+        candidate_range = []
+        for j in adic[:args.Adjacen]:
+            for condition_class in classed_conditions_library[j[0]]:
+                if condition_class['class_label'] == [[], []]:
+                    continue
+                else:
+                    candidate = condition_candidate()
+                    candidate.get_class_id(condition_class['class_id'])
+                    candidate.get_temp_similarity(float(j[1]))
+                    candidate.get_class_label(condition_class['class_label'])
+                    candidate.get_conditions(condition_class['encoded_conditions'])
+                    candidate_range.append(candidate)
+        candidate_range = merge_same_lable_candidate(candidate_range)
+        return candidate_range
+
+def condition_selector(args, temp:str,pred:list):
+    try:
+        candidate_range = get_candidate_range(args,temp)
+        candidate_range = get_condition_score(candidate_range,pred,condition_key)
+        return candidate_range
+    except:
+        return []
 
 def MPNN_prediction(args,model_dir,smiles):
     MPNN_args = ['--test_path', '%s'%args.test_path, '--checkpoint_dir', '%s'%model_dir, '--preds_path', './sample_preds.csv']
@@ -362,6 +381,7 @@ def MPNN_prediction(args,model_dir,smiles):
 
 
 def Prediction(args):
+    global classed_conditions_library, condition_key
     t1 = time.time()
     # Load data
     test_data = pd.read_csv(args.test_path)
@@ -381,8 +401,10 @@ def Prediction(args):
         classed_conditions_library = json.load(f)
     
     # Get condition clusters prediction
-    print(len(list(MPNN_pred['cat'][0][0])),len(list(MPNN_pred['solv0'][0][0])),len(list(MPNN_pred['solv1'][0][0])),len(list(MPNN_pred['reag0'][0][0])),len(list(MPNN_pred['reag1'][0][0])),len(list(MPNN_pred['reag2'][0][0])))
-    condition_pred = Parallel(n_jobs=-1,verbose=4)(delayed(condition_selector)(args,template[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library,condition_key) for i in range(test_data.shape[0]))
+   if args.Adjacen != 0:
+        condition_pred = Parallel(n_jobs=-1,verbose=4)(delayed(condition_selector)(args,template[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])]) for i in range(test_data.shape[0]))
+    else:
+        condition_pred = [condition_selector(args,template[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])]) for i in range(test_data.shape[0])]
 
     # Save
     with open('%s'%args.save_path,'w') as f:
