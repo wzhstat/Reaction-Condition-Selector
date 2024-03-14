@@ -12,9 +12,9 @@ import os
 import gzip
 csv.field_size_limit(500 * 1024 * 1024)
 
-def open_csv(path:str):
+def get_keys(path:str):
     '''
-    open csv file and get all cat,solv,reag
+    open csv file and get all cat,solv,reag keys
     args:
         path: csv file path
     '''
@@ -107,7 +107,7 @@ def get_condition_one_hot(condition,list):
         get_one_hot[one_hot_index] = 1
     return get_one_hot
 
-def open_MPNN_data(args,target_list: list, data: pd.DataFrame):
+def Extraction_MPNN_data(args,target_list: list, data: pd.DataFrame):
     '''
     open csv file and get all data for MPNN
     args:
@@ -126,13 +126,13 @@ def open_MPNN_data(args,target_list: list, data: pd.DataFrame):
     MLP_all_data = pd.DataFrame()
     rxnsmile = Parallel(n_jobs=-1, verbose=4)(delayed(remove_reagent)(reaction) for reaction in list(data['reaction']))
     target_index = Parallel(n_jobs=-1, verbose=4)(delayed(get_index)(condition,target_list) for condition in list(data[args.target]))
-    MLP_all_data['smarts'] = rxnsmile
+    MLP_all_data['reaction'] = rxnsmile
     MLP_all_data['target'] = target_index
     return MLP_all_data
 
 
 
-def save_MPNN_csv(args,MLP_all_data):
+def save_csv(args,MLP_all_data):
     '''
     save data to csv file
     args:
@@ -169,7 +169,7 @@ def get_MPNN_data(args):
         N: whether to use N
     '''
     data = pd.read_csv('%s/%s.csv'%(args.data_path,args.data_name))
-    cat_list,cat_list_N,solv_list,solv_list_N,reag_list,reag_list_N = open_csv(args.data_path)
+    cat_list,cat_list_N,solv_list,solv_list_N,reag_list,reag_list_N = get_keys(args.key_path)
     if args.N:
         if args.target in ['cat']:
             target_list = eval('%s_list_N'%args.target)
@@ -184,11 +184,9 @@ def get_MPNN_data(args):
             target_list =solv_list
         else:
             target_list = reag_list
-    MLP_all_data= open_MPNN_data(args,target_list,data)
-    save_MPNN_csv(args,MLP_all_data)
+    MLP_all_data= Extraction_MPNN_data(args,target_list,data)
+    save_csv(args,MLP_all_data)
 
 
 if __name__ == '__main__':
     pass
-
-    
