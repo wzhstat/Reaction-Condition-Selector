@@ -101,8 +101,9 @@ _id,Mapped,Reaction,template
 ```
 You can make predictions by running the corresponding ```prediction.py``` directly, the specific use case is as follows:<br>
 ```
-python ./prediction.sh --test_path ./data/test_data.csv --model_path ./data/model/MPNN_models --key_path ./data/model/keys --library_path ./data/model/classed_conditions_library.json --save_path ./data/condition_pred.json
+python ./prediction.sh --test_path ./data/test_data.csv --model_path ./data/model/MPNN_models --key_path ./data/model/keys --library_path ./data/model/classed_conditions_library.json --save_path ./data/condition_pred.json --Adjacen 10
 ```
+```--Adjacen``` is the number of adjacent templates used as candidates. When it is equal to 0, only the reaction conditions corresponding to the exact same templates are used. When used for inverse synthesis analysis models, adjacen=0 is recommended to improve prediction speed because all templates are known. When predicting reaction conditions for actual reactions, it is recommended to consider adjacent templates, which are more likely to give reasonable predictions.
 You'll end up with a json file that contains predictions for reaction conditions by category:
 ```
 class id: 50_4
