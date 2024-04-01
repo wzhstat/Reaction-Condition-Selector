@@ -88,7 +88,7 @@ It will eventually output a json file```conditions_library.json```.
 ## Files required for the task
 To perform the conditional prediction task, we need the following files: <br>
 ```dMPNN checkpoints```: A trained dMPNN scoring model is used to score each component in a reaction condition.<br>
-```conditions_library.json```: The reaction Condition library is extracted from the training data set, and the responses under each template are clustered using Condition Cluster. This file is used to provide a candidate list for conditional predictions.<br>
+```conditions_librarys```: The reaction Condition library is extracted from the training data set, and the responses under each template are clustered using Condition Cluster. This file is used to provide a candidate list for conditional predictions.<br>
 ```Condition keys```: Contains three CSV files for decoding the predicted catalyst, solvent, and reagent.<br>
 These files can be found in the ```model``` file.<br>
 
