@@ -78,7 +78,7 @@ You can run ```prediction.sh```to get the raw prediction of the test dataset, wh
 # Condition Clusterer
 Run ```class_conditions.py``` and it calculates the reaction conditions under each template and clusters them. The files obtained by clustering are also used as candidate libraries for subsequent predictions:
 ```
-python class_conditions.py --Inclusion 0.9 --data_set train
+python class_conditions.py --Inclusion 0.9 --data_set train --tpl_radius 0
 ```
 ```Inclusion```is the tolerance for labels of each category.   It indicates that a label can be selected as a category label only when the number of times it appears is greater than the total number of conditions times Inclusion.<br>
 ```data_set```data_set is the data set to be collected. In addition to train, test, val, you can also select all.<br>
