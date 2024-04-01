@@ -34,23 +34,27 @@ def get_temp_condition(args):
         data =pd.read_csv('%s/data_test.csv'%(args.save_path))
     elif args.data_set == 'val':
         data =pd.read_csv('%s/data_val.csv'%(args.save_path))
-    data = data.sort_values(by=['template_%s'%args.tpl_radius])
+    print(data)
+    data.sort_values(by=['template_%s'%args.tpl_radius],inplace=True)
+    print(data)
     l = data.shape[0]
-    condition_list = []
-    adic = {'tpl':data['template_0'][0],'tpl_smarts':data['tpl_smarts_%s'%args.tpl_radius][0],'conditions':{}}
+    condition_list = {}
+    adic = {'tpl':str(data['template_%s'%args.tpl_radius][0]),'tpl_smarts':data['tpl_smarts_%s'%args.tpl_radius][0],'conditions':{}}
     for i in range(l):
         if i%(l//1000) == 0:
             print("\r", end="")
             print("Progress: {}%: ".format(i/((l//1000)*10)), "▋" * int(i/((l//1000)*20)), end="")
             sys.stdout.flush()
-        tem = data['template_0'][i]
+        tem = data['template_%s'%args.tpl_radius][i]
         cat = data['cat'][i] if str(data['cat'][i]) != 'nan' else 'None'
         solv0 = data['solv0'][i] if str(data['solv0'][i]) != 'nan' else 'None'
         solv1 = data['solv1'][i] if str(data['solv1'][i]) != 'nan' else 'None'
         reag0 = data['reag0'][i] if str(data['reag0'][i]) != 'nan' else 'None'
         reag1 = data['reag1'][i] if str(data['reag1'][i]) != 'nan' else 'None'
         reag2 = data['reag2'][i] if str(data['reag2'][i]) != 'nan' else 'None'
-        if tem == adic['tpl']:
+        reactants = data['reactants'][i]
+        products = data['products'][i]
+        if str(tem) == adic['tpl']:
             if cat not in cat_list_N:
                 continue
             elif solv1 not in solv_list_N or solv0 not in solv_list_N:
@@ -62,14 +66,16 @@ def get_temp_condition(args):
                 if str(condition[j]) == 'nan':
                     condition[j] = 'None'
             if str(condition) in adic['conditions']:
-                adic['conditions'][str(condition)] += 1
+                adic['conditions'][str(condition)].append((reactants,products))
             else:
-                adic['conditions'][str(condition)] = 1
+                adic['conditions'][str(condition)] = [(reactants,products)]
         else:
-            condition_list.append(adic)
-            for k in range(adic['tpl']+1,tem):
-                condition_list.append({'tpl':k,'tpl_smarts':'None','conditions':{}})
-            adic = {'tpl':tem,'tpl_smarts':data['tpl_smarts_%s'%args.tpl_radius][i],'conditions':{}}
+            condition_list[adic['tpl_smarts']] = adic
+            '''
+            for k in range(int(adic['tpl'])+1,tem):
+                condition_list.append({'tpl':str(k),'tpl_smarts':'None','conditions':{}})
+            '''
+            adic = {'tpl':str(tem),'tpl_smarts':data['tpl_smarts_%s'%args.tpl_radius][i],'conditions':{}}
             if cat not in cat_list_N:
                 continue
             elif solv1 not in solv_list_N or solv0 not in solv_list_N:
@@ -81,14 +87,17 @@ def get_temp_condition(args):
                 if str(condition[j]) == 'nan':
                     condition[j] = 'None'
             if str(condition) in adic['conditions']:
-                adic['conditions'][str(condition)] += 1
+                adic['conditions'][str(condition)].append((reactants,products))
             else:
-                adic['conditions'][str(condition)] = 1
-    condition_list.append(adic)
+                adic['conditions'][str(condition)] = [(reactants,products)]
+    condition_list[adic['tpl_smarts']] = adic
     print('get condition list done')
     return condition_list
 
 if __name__ == '__main__':
     #get_temp_condition()
+    with gzip.open('data/condition_library.json.gz','rt') as f:
+        condition_list = json.load(f)
+    print(condition_list[2])
     pass
 
