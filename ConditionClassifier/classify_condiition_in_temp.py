@@ -214,6 +214,12 @@ def check(class_list):
         o1 += len(i['conditions'])
     return o1
 
+def get_crp_dic(test_dic,condition_list):
+    out = {}
+    for i in condition_list:
+        out[str(i)] = test_dic[str(i)]
+    return out
+
 def encode_condition(condition_list:list,cat_list:list,solv_list:list,reag_list:list):
     '''
     encode condition list to index
@@ -253,9 +259,9 @@ def encode_condition(condition_list:list,cat_list:list,solv_list:list,reag_list:
     return out
 
 
-def Classify_reaction_conditions(test_list,tem,smart,args):
-    cat_list,solv_list,reag_list = get_condition_key('data')
-    test_list = [eval(str(i)) for i in test_list]
+def Classify_reaction_conditions(test_dic,tem,smart,args):
+    cat_list,solv_list,reag_list = get_condition_key(args.key_path)
+    test_list = [eval(str(i)) for i in list(test_dic.keys())]
     test_list = get_labeled_condition(test_list)
     test_list = classify(args,test_list,[],2)
     test_list = merge_list(test_list)
@@ -263,14 +269,20 @@ def Classify_reaction_conditions(test_list,tem,smart,args):
     test_list = merge_list(test_list)
     out_list = []
     for i in range(len(test_list)):
+        crp_dic = get_crp_dic(test_dic,test_list[i]['conditions'])
         try:
             encoded_conditions = encode_condition(test_list[i]['conditions'],cat_list,solv_list,reag_list)
         except:
             print('___________________________________________________________')
-        out_list.append({'tpl':str(tem),'tpl_smart':smart,'class_id':str(tem)+'_%s'%i,'class_label':test_list[i]['class_label'],'conditions':test_list[i]['conditions'],'encoded_conditions':encoded_conditions})
+        out_list.append({'tpl':str(tem),'tpl_smart':smart,'class_id':str(tem)+'_%s'%i,'class_label':test_list[i]['class_label'],'conditions':test_list[i]['conditions'],'encoded_conditions':encoded_conditions,'crp_dic':crp_dic})
     return out_list
 
 
 
 if __name__ == '__main__':
     pass
+    
+
+
+    
+    
