@@ -7,7 +7,7 @@ from chemprop.models import MoleculeModel
 from chemprop.uncertainty import UncertaintyCalibrator, build_uncertainty_calibrator
 import pandas as pd
 import csv
-import json
+import json,gzip
 import argparse
 from rdkit import Chem
 from rdkit.Chem.Fingerprints import FingerprintMols
@@ -325,49 +325,27 @@ def merge_same_lable_candidate(candidate_range):
                     i.conditions += candidate.conditions
     return out
 
-def get_candidate_range(args,target_temp):
-    if args.Adjacen == 0:
+def get_candidate_range(args,target_temp,classed_conditions_library):
         candidate_range = []
         for condition_class in classed_conditions_library[target_temp]:
+            '''
             if condition_class['class_label'] == [[], []]:
                 continue
             else:
-                candidate = condition_candidate()
-                candidate.get_class_id(condition_class['class_id'])
-                candidate.get_temp_similarity(1)
-                candidate.get_class_label(condition_class['class_label'])
-                candidate.get_conditions(condition_class['encoded_conditions'])
-                candidate_range.append(candidate)
-        return candidate_range
-    else:
-        adic = {}
-        for i in list(classed_conditions_library.keys()):
-            try:
-                class_temp = i
-            except:
-                continue
-            score = cal_temp_similarity(target_temp,class_temp)
-            adic[i] = score
-        adic = sorted(adic.items(), key=lambda x:x[1],reverse=True)
-
-        candidate_range = []
-        for j in adic[:args.Adjacen]:
-            for condition_class in classed_conditions_library[j[0]]:
-                if condition_class['class_label'] == [[], []]:
-                    continue
-                else:
-                    candidate = condition_candidate()
-                    candidate.get_class_id(condition_class['class_id'])
-                    candidate.get_temp_similarity(float(j[1]))
-                    candidate.get_class_label(condition_class['class_label'])
-                    candidate.get_conditions(condition_class['encoded_conditions'])
-                    candidate_range.append(candidate)
-        candidate_range = merge_same_lable_candidate(candidate_range)
+            '''
+            candidate = condition_candidate()
+            candidate.get_class_id(condition_class['class_id'])
+            candidate.get_temp_similarity(1)
+            candidate.get_class_label(condition_class['class_label'])
+            candidate.get_conditions(condition_class['encoded_conditions'])
+            candidate_range.append(candidate)
         return candidate_range
 
-def condition_selector(args, temp:str,pred:list):
+
+
+def condition_selector(args, temp:str,pred:list,classed_conditions_library:dict):
     try:
-        candidate_range = get_candidate_range(args,temp)
+        candidate_range = get_candidate_range(args,temp,classed_conditions_library)
         candidate_range = get_condition_score(candidate_range,pred,condition_key)
         return candidate_range
     except:
@@ -381,44 +359,59 @@ def MPNN_prediction(args,model_dir,smiles):
 
 
 def Prediction(args):
-    global classed_conditions_library, condition_key
+    global condition_key
     t1 = time.time()
     # Load data
     test_data = pd.read_csv(args.test_path)
+    ids = test_data['_id']
     smiles = [[test_data['Mapped Reaction'][i]] for i in range(len(test_data))]
-    template = test_data['template']
+    template_r0 = test_data['template_r0']
+    template_r1 = test_data['template_r1']
+    template_r_1 = test_data['template_r-1']
     # MPNN prediction
     MPNN_pred = {}
-    for target in ['catalyst','solvent0','solvent1','reagent0','reagent1','reagent2']:
-        model_dir = "%s/MPNN_%s"%(args.model_path,target)
+    for target in ['cat','solv0','solv1','reag0','reag1','reag2']:
+        model_dir = "%s/GCN_%s_withN"%(args.model_path,target)
         MPNN_pred[target] = MPNN_prediction(args,model_dir,smiles)
+    
+    t2 = time.time()
+    print('time:',t2-t1)
     
     # Load condition key
     condition_key = get_condition_key(args.key_path)
 
     # Load classed_conditions_library
-    with open(args.library_path,'r') as f:
-        classed_conditions_library = json.load(f)
+    with gzip.open(args.library_path+'/classed_conditions_library_r-1.json.gz','r') as f:
+        classed_conditions_library_r_1 = json.load(f)
+    with gzip.open(args.library_path+'/classed_conditions_library_r0.json.gz','r') as f:
+        classed_conditions_library_r0 = json.load(f)
+    with gzip.open(args.library_path+'/classed_conditions_library_r1.json.gz','r') as f:
+        classed_conditions_library_r1 = json.load(f)
     
     # Get condition clusters prediction
-   if args.Adjacen != 0:
-        condition_pred = Parallel(n_jobs=-1,verbose=4)(delayed(condition_selector)(args,template[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])]) for i in range(test_data.shape[0]))
-    else:
-        condition_pred = [condition_selector(args,template[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])]) for i in range(test_data.shape[0])]
-
+    #print(len(list(MPNN_pred['cat'][0][0])),len(list(MPNN_pred['solv0'][0][0])),len(list(MPNN_pred['solv1'][0][0])),len(list(MPNN_pred['reag0'][0][0])),len(list(MPNN_pred['reag1'][0][0])),len(list(MPNN_pred['reag2'][0][0])))
+    condition_pred = {}
+    for i in range(test_data.shape[0]):
+        
+        if template_r1[i] in classed_conditions_library_r1:
+            condition_pred[str(ids[i])] = ('r1:',condition_selector(args,template_r1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library_r1))
+        elif template_r0[i] in classed_conditions_library_r0:
+            condition_pred[str(ids[i])] = ('r0:',condition_selector(args,template_r0[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library_r0))
+        else:
+            condition_pred[str(ids[i])] = ('r-1:',condition_selector(args,template_r_1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library_r_1))
     # Save
     with open('%s'%args.save_path,'w') as f:
         json.dump(condition_pred,f)
-    t2 = time.time()
-    print(t2-t1)
+    t3 = time.time()
+    print('time:',t3-t1)
+    print('done')
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='reaction condition prediction')
     parser.add_argument('--test_path', type=str, default='./data_test.csv', help='path to test data')
     parser.add_argument('--model_path', type=str, default='./data/model/MPNN_models', help='path to model')
     parser.add_argument('--key_path', type=str, default='./data/model/keys', help='path to condition keys')
-    parser.add_argument('--library_path', type=str, default='./data/model/classed_conditions_library.json', help='path to classed conditions library')
-    parser.add_argument('--save_path', type=str, default='./data/condition_pred.json', help='path to save condition prediction')
-    parser.add_argument('--Adjacen', type=int, default=10, help='number of adjacent templates to consider')
+    parser.add_argument('--library_path', type=str, default='./data/model/condition_library', help='path to classed conditions library')
+    parser.add_argument('--save_path', type=str, default='./data/custer_condition_pred.json', help='path to save condition prediction')
     args = parser.parse_args()
     Prediction(args)
