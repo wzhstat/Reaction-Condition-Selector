@@ -1,7 +1,7 @@
 from ConditionClassifier import get_temp_condition, Classify_reaction_conditions
 import argparse
 from joblib import Parallel, delayed
-import json
+import json,gzip
 
 def main():
     parser = argparse.ArgumentParser(description='Classify reaction conditions')
@@ -13,14 +13,18 @@ def main():
     parser.add_argument('--data_set', type=str, default='train', help='data set to use,can be all, train, test or val.')
     parser.add_argument('--n_jobs', type=int, default=-1, help='number of jobs to run in parallel')
     parser.add_argument('--tpl_radius', type=int, default=0, help='radius of template')
+    parser.add_argument('--key_path', type=str, default='data/keys', help='path to key files')
     args = parser.parse_args()
     condition_list = get_temp_condition(args)
+    #save Condition list wirh gzip
+    with gzip.open('%s/condition_library_r%s.json.gz'%(args.save_path,args.tpl_radius), 'wt') as f:
+        json.dump(condition_list, f)
     print('start to classify conditions')
-    classed_condition_list = Parallel(n_jobs=-1, verbose=4)(delayed(Classify_reaction_conditions)(sorted(condition_list[i]['conditions']),condition_list[i]['tpl'],condition_list[i]['tpl_smarts'],args) for i in range(len(condition_list)))
+    classed_condition_list = Parallel(n_jobs=-1, verbose=4)(delayed(Classify_reaction_conditions)(condition_list[i]['conditions'],condition_list[i]['tpl'],condition_list[i]['tpl_smarts'],args) for i in list(condition_list.keys()))
     classed_condition_dic = {}
     for i in range(len(classed_condition_list)):
-        classed_condition_dic[condition_list[i]['tpl_smarts']] = classed_condition_list[i]
-    with open('%s/classed_conditions_library.json'%(args.save_path),'w') as f:
+        classed_condition_dic[classed_condition_list[i][0]['tpl_smart']] = classed_condition_list[i]
+    with gzip.open('%s/classed_conditions_library_r%s.json.gz'%(args.save_path,args.tpl_radius),'w') as f:
         json.dump(classed_condition_dic,f)
     print('classify conditions done')
 
