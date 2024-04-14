@@ -9,6 +9,7 @@ import sys
 from joblib import Parallel, delayed
 import csv
 import os
+import argparse
 import gzip
 csv.field_size_limit(500 * 1024 * 1024)
 
@@ -73,9 +74,12 @@ def in_list(condition,list):
 
 
 def get_index(condition,list):
-    if str(condition) == 'nan':
-        condition = "None"
-    return list.index(condition)
+    try:
+        if str(condition) == 'nan':
+            condition = "None"
+        return list.index(condition)
+    except Exception as e:
+        return 0
 
 def get_condition_fp(condition_siles:str):
     '''
@@ -121,8 +125,8 @@ def Extraction_MPNN_data(args,target_list: list, data: pd.DataFrame):
         solv_list: solv list
         reag_list: reag list
     '''
-    in_lists = Parallel(n_jobs=-1, verbose=4)(delayed(in_list)(condition,target_list) for condition in list(data[args.target]))
-    data = data[in_lists]
+    #in_lists = Parallel(n_jobs=-1, verbose=4)(delayed(in_list)(condition,target_list) for condition in list(data[args.target]))
+    #data = data[in_lists]
     MLP_all_data = pd.DataFrame()
     rxnsmile = Parallel(n_jobs=-1, verbose=4)(delayed(remove_reagent)(reaction) for reaction in list(data['reaction']))
     target_index = Parallel(n_jobs=-1, verbose=4)(delayed(get_index)(condition,target_list) for condition in list(data[args.target]))
@@ -132,7 +136,7 @@ def Extraction_MPNN_data(args,target_list: list, data: pd.DataFrame):
 
 
 
-def save_csv(args,MLP_all_data):
+def save_csv(args,out_data):
     '''
     save data to csv file
     args:
@@ -142,21 +146,21 @@ def save_csv(args,MLP_all_data):
         target: target name
         N: whether to use N
     '''
-    header = ['smarts','target']
     data_name = "GCN_%s.csv"%args.data_name
     if os.path.exists(args.save_path):
         pass
     else:
         os.mkdir(args.save_path)
     if args.N:
-        path = '%s/GCN_%s_data_withN'%(args.save_path,args.target)
+        path = '%s/GCN_data_withN'%(args.save_path)
     else:
-        path = '%s/GCN_%s_data_withoutN'%(args.save_path,args.target)
+        path = '%s/GCN_data_withoutN'%(args.save_path)
     if os.path.exists(path):
         pass
     else:
         os.mkdir(path)
-    MLP_all_data.to_csv(path+"/%s"%(data_name), mode='w', index=False,header=header)
+    out_data.to_csv('%s/%s'%(path,data_name),index=False)
+    print('save to %s/%s'%(path,data_name))
 
 def get_MPNN_data(args):
     '''
@@ -185,8 +189,11 @@ def get_MPNN_data(args):
         else:
             target_list = reag_list
     MLP_all_data= Extraction_MPNN_data(args,target_list,data)
-    save_csv(args,MLP_all_data)
+    return MLP_all_data
 
-
+        
 if __name__ == '__main__':
+    get_MPNN_data()
     pass
+
+    
