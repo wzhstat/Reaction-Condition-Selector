@@ -367,7 +367,7 @@ def Prediction(args):
     smiles = [[test_data['Mapped Reaction'][i]] for i in range(len(test_data))]
     template_r0 = test_data['template_r0']
     template_r1 = test_data['template_r1']
-    template_r_1 = test_data['template_r-1']
+    template_r_1 = test_data['template_r0*']
     # MPNN prediction
     MPNN_pred = {}
     for target in ['cat','solv0','solv1','reag0','reag1','reag2']:
