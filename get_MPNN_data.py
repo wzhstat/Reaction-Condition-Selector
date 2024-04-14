@@ -3,7 +3,6 @@ import argparse
 import pandas as pd
 
 def main():
-
     parser = argparse.ArgumentParser(description='Get data for GCN')
     parser.add_argument('--data_path', type=str, default='data', help='path to data')
     parser.add_argument('--key_path', type=str, default='data/keys', help='path to data')
