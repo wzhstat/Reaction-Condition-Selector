@@ -370,8 +370,8 @@ def Prediction(args):
     template_r_1 = test_data['template_r0*']
     # MPNN prediction
     MPNN_pred = {}
-    for target in ['cat','solv0','solv1','reag0','reag1','reag2']:
-        model_dir = "%s/GCN_%s_withN"%(args.model_path,target)
+    for target in ['catalyst','solvent0','solvent1','reagent0','reagent1','reagent2']:
+        model_dir = "%s/GCN_%s"%(args.model_path,target)
         MPNN_pred[target] = MPNN_prediction(args,model_dir,smiles)
     
     t2 = time.time()
@@ -381,8 +381,8 @@ def Prediction(args):
     condition_key = get_condition_key(args.key_path)
 
     # Load classed_conditions_library
-    with gzip.open(args.library_path+'/classed_conditions_library_r-1.json.gz','r') as f:
-        classed_conditions_library_r_1 = json.load(f)
+    with gzip.open(args.library_path+'/classed_conditions_library_r0_1.json.gz','r') as f:
+        classed_conditions_library_r0_1 = json.load(f)
     with gzip.open(args.library_path+'/classed_conditions_library_r0.json.gz','r') as f:
         classed_conditions_library_r0 = json.load(f)
     with gzip.open(args.library_path+'/classed_conditions_library_r1.json.gz','r') as f:
@@ -394,11 +394,11 @@ def Prediction(args):
     for i in range(test_data.shape[0]):
         
         if template_r1[i] in classed_conditions_library_r1:
-            condition_pred[str(ids[i])] = ('r1:',condition_selector(args,template_r1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library_r1))
+            condition_pred[str(ids[i])] = ('r1:',condition_selector(args,template_r1[i],[list(MPNN_pred['catalyst'][i][0]),list(MPNN_pred['solvent0'][i][0]),list(MPNN_pred['solvent1'][i][0]),list(MPNN_pred['reagent0'][i][0]),list(MPNN_pred['reagent1'][i][0]),list(MPNN_pred['reagent2'][i][0])],classed_conditions_library_r1))
         elif template_r0[i] in classed_conditions_library_r0:
-            condition_pred[str(ids[i])] = ('r0:',condition_selector(args,template_r0[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library_r0))
+            condition_pred[str(ids[i])] = ('r0:',condition_selector(args,template_r0[i],[list(MPNN_pred['catalyst'][i][0]),list(MPNN_pred['solvent0'][i][0]),list(MPNN_pred['solvent1'][i][0]),list(MPNN_pred['reagent0'][i][0]),list(MPNN_pred['reagent1'][i][0]),list(MPNN_pred['reagent2'][i][0])],classed_conditions_library_r0))
         else:
-            condition_pred[str(ids[i])] = ('r0*:',condition_selector(args,template_r_1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],classed_conditions_library_r_1))
+            condition_pred[str(ids[i])] = ('r0*:',condition_selector(args,template_r_1[i],[list(MPNN_pred['catalyst'][i][0]),list(MPNN_pred['solvent0'][i][0]),list(MPNN_pred['solvent1'][i][0]),list(MPNN_pred['reagent0'][i][0]),list(MPNN_pred['reagent1'][i][0]),list(MPNN_pred['reagent2'][i][0])],classed_conditions_library_r0_1))
     # Save
     with open('%s'%args.save_path,'w') as f:
         json.dump(condition_pred,f)
