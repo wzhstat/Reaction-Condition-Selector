@@ -302,9 +302,9 @@ def Prediction(args):
     # Get condition prediction
     condition_pred = {}
     for i in range(test_data.shape[0]):
-        if template_r1[i] in conditions_library_r1:
+        if template_r1[i] in conditions_library_r1 and 1==0:
             condition_pred[str(ids[i])] = condition_selector(args,template_r1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],conditions_library_r1)
-        elif template_r1[i] in conditions_library_r1:
+        elif template_r0[i] in conditions_library_r0 and 1==0:
             condition_pred[str(ids[i])] = condition_selector(args,template_r0[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],conditions_library_r0)
         else:
             condition_pred[str(ids[i])] = condition_selector(args,template_r_1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],conditions_library_r_1)
@@ -314,6 +314,7 @@ def Prediction(args):
     with open('%s'%args.save_path,'w') as f:
         json.dump(condition_pred,f)
     t2 = time.time()
+    print('Save to: %s'%args.save_path)
     print(t2-t1)
 
 if __name__ == '__main__':
@@ -323,6 +324,6 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', type=str, default='./data/new_models', help='path to model')
     parser.add_argument('--key_path', type=str, default='./data/keys', help='path to condition keys')
     parser.add_argument('--library_path', type=str, default='./data/condition_library', help='path to classed conditions library')
-    parser.add_argument('--save_path', type=str, default='./data/condition_pred_1.json', help='path to save condition prediction')
+    parser.add_argument('--save_path', type=str, default='./data/condition_pred_1_r0*.json', help='path to save condition prediction')
     args = parser.parse_args()
     Prediction(args)
