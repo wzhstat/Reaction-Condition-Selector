@@ -41,6 +41,7 @@ def Categorization_conditions(condition:str):
                     'metal alkyl':['[CX4:1][Mg,Al,Zn,Li:2]'],
                     'silane':['[SiX4:1][#6:2]'],
                     'sulfide':['[CX4:1][SX2:2]'],
+                    'base':['[OH1-,NH2-,NH1-,NH0-,SH-','[O-]','[N-]','[S-]'],
                     }
     out_list = []
     if condition == 'None':
