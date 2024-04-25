@@ -103,7 +103,7 @@ _id	Mapped, Reaction,	template_r0*,	template_r0,	template_r1
 ```
 You can make predictions by running the corresponding ```prediction.py``` directly, the specific use case is as follows:<br>
 ```
-python ./Custer_predictor.py --test_path ./data/test_data.csv --model_path ./data/model/MPNN_models --key_path ./data/model/keys --library_path ./data/model/condition_library --save_path ./data/condition_pred.json
+python ./Cluster_predictor.py --test_path ./data/test_data.csv --model_path ./data/model/MPNN_models --key_path ./data/model/keys --library_path ./data/model/condition_library --save_path ./data/condition_pred.json
 ```
 You'll end up with a json file that contains predictions for reaction conditions by category:
 ```
