@@ -34,7 +34,7 @@ def Categorization_conditions(condition:str):
                     'transition metal':['[#21,#22,#23,#24,#25,#26,#27,#28,#29,#30,#39,#40,#41,#42,#44,#45,#46,#47,#48,#72,#73,#74,#75,#76,#77,#78,#79,#80,#104,#105,#106,#107,#108,#109,#110,#111,#112]'],
                     'reducing metal':['[#3,#4,#11,#12,#13,#19,#20,#30,#26;+0]'],
                     'Main group metal':['[#13,#31,#49,#81,#50,#82,#83;+0,+1]'],
-                    'Oxidizer':['[Cr+6]','[Mn+7]','[Mn+4]','[Ce+4]','[Pb+4]','[I+3]','O[N+]([O-])=O'],
+                    'Metal oxidizer':['[Cr+6]','[Mn+7]','[Mn+4]','[Ce+4]','[Pb+4]','[I+3]','O[N+]([O-])=O'],
                     'reductant':['[H-]','[BH4-]','[AlH4-]','[NaH]','[LiH]','[BH3]','[BH2]','[BH]','[AlH3]','[AlH2]','[AlH]'],
                     'acid':['[ClH1,BrH1,IH1:1]','O=S(=O)(O)O','O=C(O)C(F)(F)F','O[N+]([O-])=O','[CX3:1](=[OX1])[OX2H1:2]'],
                     'lewis acid':['[AlX3:1][F,Cl,Br,I,C:2]','[BX3:1][F,Cl,Br,I,H:2]','[Al+3]','[Ti+4]','[Zn+2]','[ZnX2:1][Cl,Br,I:2]','[Si+4]','[Fe+3]','[FeX3:1][Cl,Br,F:2]','[Ge+4]','[Sn+4]','[Ce+4]'],
@@ -66,7 +66,7 @@ def Categorization_conditions(condition:str):
                 if mol.HasSubstructMatch(patt):
                     out_list.append('alkane')
                 else:
-                    pass
+                    out_list.append('other')
         except:
             pass
     return list(set(out_list))
@@ -104,7 +104,6 @@ def ismach(list1,list2,num:int = 2):
         return True
     return False
 
-    
 def same_class(list1,list2,num:int = 2):
     solv_reag1 = list1[1]+list1[2]
     solv_reag2 = list2[1]+list2[2]
@@ -153,7 +152,6 @@ def classify(args, condition_list, out_list: list = [],num:int = 2, update_label
                 out_list[mach_list[0][0]]['condition_label'].append(condition_list[i][1])
                 if update_label or len(out_list[mach_list[0][0]]['conditions'])<10:
                     out_list[mach_list[0][0]]['class_label'] = update_class_label(out_list[mach_list[0][0]]['condition_label'], args)
-
     return out_list
 
 def merge_list(class_list):
@@ -175,27 +173,6 @@ def merge_list(class_list):
                 all_class.append(i)
     return all_class
 
-
-def get_unnecessary_condition(conditions):
-    all_conditions = reduce(add,conditions)
-    all_conditions = Counter(all_conditions)
-    unnecessary_conditions = [i if (all_conditions[i] == 1 and all_conditions[i]<0.1*len(conditions)) else None for i in all_conditions]
-    return [i for i in unnecessary_conditions if i != None]
-
-
-
-def remove_unnecessary_condition(condition_list):
-    for i in range(len(condition_list)):
-        unnecessary_conditions = get_unnecessary_condition(condition_list[i]['conditions'])
-        for j in range(len(condition_list[i]['conditions'])):
-            condition = condition_list[i]['conditions'][j]
-            for reagent in condition:
-                if reagent in unnecessary_conditions:
-                    condition[condition.index(reagent)] = 'None'
-            new_label = get_labeled_condition([condition])[0][1]
-            condition_list[i]['condition_label'][j] = new_label
-        condition_list[i]['class_label'] = update_class_label(condition_list[i]['condition_label'])
-    return condition_list
 
 def reclassify(condition_list,args):
     classed_list = []
@@ -282,8 +259,3 @@ def Classify_reaction_conditions(test_dic,tem,smart,args):
 
 if __name__ == '__main__':
     pass
-    
-
-
-    
-    
