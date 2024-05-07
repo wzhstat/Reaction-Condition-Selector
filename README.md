@@ -52,7 +52,7 @@ The processed data can also be obtained from https://www.dropbox.com/scl/fo/v1rh
 # Training D-MPNN Model
 
 ## Step 1 Data Pre-processing
-Before training, make sure you have the data file, which should contain two parts: the data files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the keys folder.<br>
+Before training, make sure you have the data file, which should contain two parts: the data files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the ```keys``` folder.<br>
 You can run the ```preprocessing.py``` file to get the preprocessed data.<br>
 ```
 python preprocessing.py
