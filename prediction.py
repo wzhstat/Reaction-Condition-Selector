@@ -323,7 +323,7 @@ def Prediction(args):
     # Save
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
-    with open('%s/condition_predictions.json'%args.save_path,'w') as f:
+    with open('%s/condition_prediction.json'%args.save_path,'w') as f:
         json.dump(condition_pred,f)
     t2 = time.time()
     print('Save to: %s'%args.save_path)
