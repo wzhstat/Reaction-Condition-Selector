@@ -51,7 +51,7 @@ The processed data can also be obtained from https://www.dropbox.com/scl/fo/v1rh
 
 # Training D-MPNN model
 
-## Step 1 data pre-processing
+## Step 1 Data Pre-processing
 Before training, make sure you have the data file, which should contain two parts: the data files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the keys folder.<br>
 You can run the ```preprocessing.py``` file to get the preprocessed data.<br>
 ```
@@ -59,12 +59,14 @@ python preprocessing.py
 ```
 
 
-## Training
+## Step 2 Training
 You can run ```train.sh``` files directly to get models of catalyst, solvent, and reagent, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
 To train model for a particular condition, take solv0 for example, you can run:<br>
 ```
-chemprop_train --data_path ./data/GCN_solv0_data_withN/GCN_data_train.csv --separate_val_path ./data/GCN_solv0_data_withN/GCN_data_val.csv --separate_test_path ./data/GCN_solv0_data_withN/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 697 --save_dir ./data/models/GCN_solv0_withN  --reaction --extra_metrics accuracy top3 --epochs 35
+chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data/GCN_data_train.csv  --separate_val_path ./data/MPNN_data/GCN_data/GCN_data_val.csv --separate_test_path ./data/MPNN_data/GCN_data/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 538 --save_dir ./data/models/GCN_solv0  --reaction --extra_metrics accuracy top3 --epochs 35
 ```
+<br>
+You end up with a models folder that contains the trained D-MPNN model<br>
 
 
 ## Predicting
