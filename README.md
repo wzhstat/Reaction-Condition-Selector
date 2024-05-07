@@ -69,38 +69,21 @@ chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data/GCN_
 You end up with a models folder that contains the trained D-MPNN model. You can also download trained models directly from ```models/models.``` <br>
 
 
-## Predicting
-You can run ```prediction.sh```to get the raw prediction of the test dataset, which will generate a ```raw_prediction``` folder.
+# Using trained model to make predictions
 
-# Condition Clusterer
-Run ```class_conditions.py``` and it calculates the reaction conditions under each template and clusters them. The files obtained by clustering are also used as candidate libraries for subsequent predictions:
+## Step 1 Construction of a library of reaction conditions
+Before making a prediction, run ```BuildConditionLibrary.sh``` to build the three types of reaction condition libraries needed for prediction, namely the r1 library, the r0 library, and the r0* library. You can also run get_condition_library.py directly to get a specific library of reaction conditions.
 ```
-python class_conditions.py --Inclusion 0.9 --data_set train --tpl_radius 0
+python class_conditions.py --Inclusion 0.8 --data_set train --tpl_radius 0
 ```
 ```Inclusion```is the tolerance for labels of each category.   It indicates that a label can be selected as a category label only when the number of times it appears is greater than the total number of conditions times Inclusion.<br>
-```data_set```data_set is the data set to be collected. In addition to train, test, val, you can also select all.<br>
-It will eventually output a json file```conditions_library.json```.
+```data_set``` is the data set to be collected. <br>
+```--tpl_radius``` Radius of templates used for categorization.<br>
 
-# Using trained model to make predictions
-## Files required for the task
-To perform the conditional prediction task, we need the following files: <br>
-```dMPNN checkpoints```: A trained dMPNN scoring model is used to score each component in a reaction condition.<br>
-```conditions_librarys```: The reaction Condition library is extracted from the training data set, and the responses under each template are clustered using Condition Cluster. This file is used to provide a candidate list for conditional predictions.<br>
-```Condition keys```: Contains three CSV files for decoding the predicted catalyst, solvent, and reagent.<br>
-These files can be found in the ```model``` file.<br>
-
-## Predicting
-The file that predicts the input should contain at least two parts, one reflecting the mapped smiles and the other its corresponding template.<br>
+## Step 2 Prediction
+You can make predictions by running the corresponding ```Cluster_predictor.py``` directly, the specific use case is as follows:<br>
 ```
-_id	Mapped, Reaction,	template_r0*,	template_r0,	template_r1
-53896491,	CCO[C:8](=[O:9])[CH2:7][C:6](=O)[CH:3]([CH2:2][CH3:1])[CH2:4][CH3:5].[NH2:15][c:14]1[cH:13][cH:12][n:11][nH:10]1>>[CH3:1][CH2:2][CH:3]([CH2:4][CH3:5])[c:6]1[cH:7][c:8](=[O:9])[n:10]2[n:11][cH:12][cH:13][c:14]2[nH:15]1,	ncccn>>CCOCCC=O.N.n,	[n;H0;D3;+0:5]:[c;H0;D3;+0:1]:[cH;D2;+0:2]:[c;H0;D3;+0:3]:[nH;D2;+0:4]>>C-C-O-[C;H0;D3;+0:1]-[CH2;D2;+0:2]-[C;H0;D3;+0:3]=O.[NH2;D1;+0:4].[nH;D2;+0:5],	[#7;a:6]:[n;H0;D3;+0:7]1:[c:8]:[nH;D2;+0:9]:[c;H0;D3;+0:4](-[C:5]):[cH;D2;+0:3]:[c;H0;D3;+0:1]:1=[O;D1;H0:2]>>C-C-O-[C;H0;D3;+0:1](=[O;D1;H0:2])-[CH2;D2;+0:3]-[C;H0;D3;+0:4](=O)-[C:5].[#7;a:6]:[nH;D2;+0:7]:[c:8]-[NH2;D1;+0:9]
-53896492,	[CH3:1][CH2:2][CH:3]([CH2:4][CH3:5])[c:6]1[cH:7][c:8](=O)[n:10]2[n:11][cH:12][cH:13][c:14]2[nH:15]1>>[CH3:1][CH2:2][CH:3]([CH2:4][CH3:5])[c:6]1[cH:7][c:8]([Cl:9])[n:10]2[n:11][cH:12][cH:13][c:14]2[n:15]1,	c.n>>c=O.n,	[c;H0;D3;+0:1].[n;H0;D2;+0:2]>>O=[c;H0;D3;+0:1].[nH;D2;+0:2],	[#7;a:7]:[#7;a:6]1:[c:5]:[n;H0;D2;+0:4]:[c:3]:[c:2]:[c;H0;D3;+0:1]:1>>O=[c;H0;D3;+0:1]1:[c:2]:[c:3]:[nH;D2;+0:4]:[c:5]:[#7;a:6]:1:[#7;a:7]
-53896499,	[CH3:19][C:18]([CH3:20])([CH3:21])[O:17][C:15](=[O:16])[NH:14][CH:13]1[CH2:12][CH2:11][CH:10]([NH2:9])[CH2:22]1.[CH3:1][CH2:2][CH:3]([CH2:4][CH3:5])[c:6]1[cH:7][c:8](Cl)[n:23]2[n:24][cH:25][cH:26][c:27]2[n:28]1>>[CH3:1][CH2:2][CH:3]([CH2:4][CH3:5])[c:6]1[cH:7][c:8]([NH:9][CH:10]2[CH2:11][CH2:12][CH:13]([NH:14][C:15](=[O:16])[O:17][C:18]([CH3:19])([CH3:20])[CH3:21])[CH2:22]2)[n:23]2[n:24][cH:25][cH:26][c:27]2[n:28]1,	cN>>N.cCl,	[NH;D2;+0:2]-[c;H0;D3;+0:1]>>Cl-[c;H0;D3;+0:1].[NH2;D1;+0:2],	[#7;a:3]:[#7;a:2]:[c;H0;D3;+0:1](-[NH;D2;+0:8]-[C:7]):[c:4]:[c:5]:[#7;a:6]>>Cl-[c;H0;D3;+0:1](:[#7;a:2]:[#7;a:3]):[c:4]:[c:5]:[#7;a:6].[C:7]-[NH2;D1;+0:8]
-53896500,	[CH3:2][CH2:3][CH:4]([CH2:5][CH3:6])[c:7]1[cH:8][c:9]([NH:10][CH:11]2[CH2:12][CH2:13][CH:14]([NH:15]C(=O)OC(C)(C)C)[CH2:16]2)[n:17]2[n:18][cH:19][cH:20][c:21]2[n:22]1>>[ClH:1].[CH3:2][CH2:3][CH:4]([CH2:5][CH3:6])[c:7]1[cH:8][c:9]([NH:10][CH:11]2[CH2:12][CH2:13][CH:14]([NH2:15])[CH2:16]2)[n:17]2[n:18][cH:19][cH:20][c:21]2[n:22]1	N>>CC(C)(C)OC(N)=O,	[CH;D3;+0:1]-[N;H0;D3;+0:2]>>C-C-N(-[CH2;D2;+0:1])-C-C.[NH;D2;+0:2],	[C:2]-[NH2;D1;+0:1]>>C-C(-C)(-C)-O-C(=O)-[NH;D2;+0:1]-[C:2]
-```
-You can make predictions by running the corresponding ```prediction.py``` directly, the specific use case is as follows:<br>
-```
-python ./Cluster_predictor.py --test_path ./data/test_data.csv --model_path ./data/model/MPNN_models --key_path ./data/model/keys --library_path ./data/model/condition_library --save_path ./data/condition_pred.json
+python ./Cluster_predictor.py --test_path ./data/test_data.csv --model_path ./data/models/models --key_path ./data/models/keys --library_path ./data/models/condition_library --save_path ./data/condition_pred.json
 ```
 You'll end up with a json file that contains predictions for reaction conditions by category:
 ```
