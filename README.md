@@ -71,7 +71,7 @@ You end up with a models folder that contains the trained D-MPNN model. You can 
 
 # Using Trained Model to Make Predictions
 
-## Step 1 Construction of a library of reaction conditions
+## Step 1 Construction of Reaction Condition Library
 Before making a prediction, run ```BuildConditionLibrary.sh``` to build the three types of reaction condition libraries needed for prediction, namely the r1 library, the r0 library, and the r0* library. You can also run get_condition_library.py directly to get a specific library of reaction conditions.
 ```
 python class_conditions.py --Inclusion 0.8 --data_set train --tpl_radius 0
