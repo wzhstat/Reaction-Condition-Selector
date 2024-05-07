@@ -11,7 +11,7 @@ To run the reaction condition selector you need:
 
 You can go to https://github.com/connorcoley/rdchiral for more informaton.
 
-# Data preprocessing
+# Get Dataset
 Our data is derived from a dataset extracted from patents provided by the USPTO, which can be downloaded from the following address: 
 https://figshare.com/articles/dataset/Chemical_reactions_from_US_patents_1976-Sep2016_/5104873 <br>
 We need two of these sections, ```1976_Sep2016_USPTOgrants_cml.7z``` and ```2001_Sep2016_USPTOapplications_cml.7z```. After decompression, plaese save the file under applications directly to the grants file.<br>
