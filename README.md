@@ -49,7 +49,7 @@ The following files are generated when you run the program: <br>
 ```data_train.csv```,```data_test.csv```,```data_val.csv```:These are the data sets that are randomly divided.<br>
 The processed data can also be obtained from https://www.dropbox.com/scl/fo/v1rhyes2wvead9dz3x4fb/h?rlkey=nqtst7azldcry3ixnoigmcv3v&dl=0 <br>
 
-# Training D-MPNN model
+# Training D-MPNN Model
 
 ## Step 1 Data Pre-processing
 Before training, make sure you have the data file, which should contain two parts: the data files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the keys folder.<br>
@@ -69,7 +69,7 @@ chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data/GCN_
 You end up with a models folder that contains the trained D-MPNN model. You can also download trained models directly from models/models. <br>
 
 
-# Using trained model to make predictions
+# Using Trained Model to Make Predictions
 
 ## Step 1 Construction of a library of reaction conditions
 Before making a prediction, run ```BuildConditionLibrary.sh``` to build the three types of reaction condition libraries needed for prediction, namely the r1 library, the r0 library, and the r0* library. You can also run get_condition_library.py directly to get a specific library of reaction conditions.
