@@ -81,11 +81,8 @@ python class_conditions.py --Inclusion 0.8 --data_set train --tpl_radius 0
 ```--tpl_radius``` Radius of templates used for categorization.<br>
 
 ## Step 2 Prediction
-You can make predictions by running the corresponding ```Cluster_predictor.py``` directly, the specific use case is as follows:<br>
-```
-python ./Cluster_predictor.py --test_path ./data/test_data.csv --model_path ./data/models/models --key_path ./data/models/keys --library_path ./data/models/condition_library --save_path ./data/condition_pred.json
-```
-You'll end up with a json file that contains predictions for reaction conditions by category:
+You can run ```make_predictions.sh``` to complete the model predictions, which generates a prediction folder This will generate a prediction folder containing predictions with and without clustering.<br>
+An examples of prediction results that include clustering are as follows:<br>
 ```
 class id: 50_4
 class label [[], ['phosphine', 'halide']]
