@@ -105,6 +105,11 @@ best condition: ['C[N+](C)(C)C.[Cl-]', 'None', 'None', 'O=P(Cl)(Cl)Cl', 'None', 
 score: 9.45609355368023e-28
 condition score: [["['C[N+](C)(C)C.[Cl-]', 'None', 'None', 'O=P(Cl)(Cl)Cl', 'None', 'None']", 9.45609355368023e-28], ["['CC[N+](CC)(CC)CC.[Cl-]', 'CC#N', 'None', 'CN(C)c1ccccc1', 'O=P(Cl)(Cl)Cl', 'None']", 4.047334473315928e-40]]
 ```
+## Setp 3 Calculate Accuracy
+Please run Score.py to calculate the accuracy of the model predictions.
+```
+python Score.py --data_path ./data/data_test.csv --pred_path ./data/prediction
+```
 
 
 
