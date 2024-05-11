@@ -81,7 +81,7 @@ python class_conditions.py --Inclusion 0.8 --data_set train --tpl_radius 0
 ```--tpl_radius``` is the radius of templates used for categorization.<br>
 
 ## Step 2 Prediction
-You can run ```make_predictions.sh``` to complete the model predictions, which generates a prediction folder. This will generate a prediction folder containing predictions with and without clustering.<br>
+You can run ```make_predictions.sh``` to complete the model predictions, which generates a prediction folder containing predictions with and without clustering.<br>
 An examples of prediction results that include clustering are as follows:<br>
 ```
 class id: 50_4
