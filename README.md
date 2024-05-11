@@ -52,7 +52,7 @@ The processed data can also be obtained from https://www.dropbox.com/scl/fo/v1rh
 # Training D-MPNN Model
 
 ## Step 1 Data Pre-processing
-Before training, make sure you have the data file, which should contain two parts: the data files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the ```keys``` folder.<br>
+Before training, make sure you have the data file, which should contain two parts: the csv files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the ```keys``` folder.<br>
 You can run the ```preprocessing.py``` file to get the preprocessed data.<br>
 ```
 python preprocessing.py
@@ -60,7 +60,7 @@ python preprocessing.py
 
 
 ## Step 2 Training
-You can run ```train.sh``` files directly to get models of catalyst, solvent, and reagent, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
+You can run ```train.sh``` files directly to get models of catalyst, solvents, and reagents, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
 To train model for a particular condition, take solv0 for example, you can run:<br>
 ```
 chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data/GCN_data_train.csv  --separate_val_path ./data/MPNN_data/GCN_data/GCN_data_val.csv --separate_test_path ./data/MPNN_data/GCN_data/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 538 --save_dir ./data/models/GCN_solv0  --reaction --extra_metrics accuracy top3 --epochs 35
