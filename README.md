@@ -78,7 +78,7 @@ python class_conditions.py --Inclusion 0.8 --data_set train --tpl_radius 0
 ```
 ```Inclusion```is the tolerance for labels of each category.   It indicates that a label can be selected as a category label only when the number of times it appears is greater than the total number of conditions times Inclusion.<br>
 ```data_set``` is the data set to be collected. <br>
-```--tpl_radius``` Radius of templates used for categorization.<br>
+```--tpl_radius``` is the radius of templates used for categorization.<br>
 
 ## Step 2 Prediction
 You can run ```make_predictions.sh``` to complete the model predictions, which generates a prediction folder This will generate a prediction folder containing predictions with and without clustering.<br>
