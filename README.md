@@ -115,11 +115,11 @@ This may take a while, and the calculated result will be printed out：
 Top-1 Accuracy: 0.44624893250539177
 Top-3 Accuracy: 0.6360386179744381
 Top-5 Accuracy: 0.706326805332407
-Top-10 Accuracy: 0.7865445018599737
+Top-10 Accuracy: 0.7854645018599737
 Cluster Top-1 Accuracy: 0.6553620796966144
-Cluster Top-3 Accuracy: 0.8503770608073878
+Cluster Top-3 Accuracy: 0.8564770608073878
 Cluster Top-5 Accuracy: 0.9074066032683428
-Cluster Top-10 Accuracy: 0.9545355855660255
+Cluster Top-10 Accuracy: 0.9645355855660255
 
 ```
 
