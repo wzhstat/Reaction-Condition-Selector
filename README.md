@@ -120,7 +120,6 @@ Cluster Top-1 Accuracy: 0.6553620796966144
 Cluster Top-3 Accuracy: 0.8564770608073878
 Cluster Top-5 Accuracy: 0.9074066032683428
 Cluster Top-10 Accuracy: 0.9645355855660255
-
 ```
 
 # Predictions of conditions in actual drug synthesis routes
