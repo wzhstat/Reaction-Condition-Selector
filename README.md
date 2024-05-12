@@ -113,6 +113,8 @@ python Score.py --data_path ./data/data_test.csv --pred_path ./data/prediction
 
 # Predictions of conditions in actual drug synthesis routes
 ## Step 1 Obtaining route data
-Our actual route data was artificially extracted from the article, and the processed data file can be downloaded from https://www.dropbox.com/scl/fo/v1rhyes2wvead9dz3x4fb/h?rlkey=nqtst7azldcry3ixnoigmcv3v&dl=0.<Br>
+Our actual route data was artificially extracted from the article, and the processed ```sys_data.csv``` file can be found in the ```data``` folder.<Br>
+
+
 
 
