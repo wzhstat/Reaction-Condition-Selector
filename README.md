@@ -110,6 +110,18 @@ Please run Score.py to calculate the accuracy of the model predictions.
 ```
 python Score.py --data_path ./data/data_test.csv --pred_path ./data/prediction
 ```
+This may take a while, and the calculated result will be printed out：
+```
+Top-1 Accuracy: 0.44624893250539177
+Top-3 Accuracy: 0.6360386179744381
+Top-5 Accuracy: 0.706326805332407
+Top-10 Accuracy: 0.7865445018599737
+Cluster Top-1 Accuracy: 0.6553620796966144
+Cluster Top-3 Accuracy: 0.8503770608073878
+Cluster Top-5 Accuracy: 0.9074066032683428
+Cluster Top-10 Accuracy: 0.9545355855660255
+
+```
 
 # Predictions of conditions in actual drug synthesis routes
 ## Step 1 Obtaining route data
