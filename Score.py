@@ -25,6 +25,13 @@ def get_true_data(path:str):
     for i in range(l):
         condition_trun = []
         for i in [str(data['cat'][i]),str(data['solv0'][i]),str(data['solv1'][i]),str(data['reag0'][i]),str(data['reag1'][i]),str(data['reag2'][i])]:
+             try:
+                mol = Chem.MolFromSmiles(i)
+                inch = Chem.MolToInchi(mol)
+                mol = Chem.MolFromInchi(inch)
+                i = Chem.MolToSmiles(mol)
+            except:
+                i = i
             if i == 'nan':
                 i = 'None'
             condition_trun.append(i)
