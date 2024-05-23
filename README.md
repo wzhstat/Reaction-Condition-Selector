@@ -5,11 +5,15 @@ This repository contains a reaction condition selector.
 python 3.10
 
 # Install Requirements
-To run the reaction condition selector you need:
-* RDkit <br>
-* RDchiral <br>
-* Chemprop v1.6.1 <br>
-You can go to https://github.com/connorcoley/rdchiral for more informaton.
+To run the reaction condition selector you need to make sure you have installed anaconda. The version about pytorch and cudatoolkit should be depended on your machine.
+```
+conda create -n Cluster_Predictor python=3.10 \
+conda activate Cluster_Predictor \
+pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116 \
+pip install pandas==1.3.4 \
+pip install chemprop==1.6.1 \
+conda install rdkit=2023.3.3 -c rdkit \
+```
 
 # Training D-MPNN Model
 
