@@ -1,2 +1,0 @@
-Task,Mean cross_entropy,Standard deviation cross_entropy,Fold 0 cross_entropy,Mean accuracy,Standard deviation accuracy,Fold 0 accuracy,Mean top3,Standard deviation top3,Fold 0 top3
-solv1,0.5877155972419131,0.0,0.5877155972419131,0.8660963712420571,0.0,0.8660963712420571,0.9555632752905756,0.0,0.9555632752905756
