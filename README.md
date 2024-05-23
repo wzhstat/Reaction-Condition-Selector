@@ -6,9 +6,9 @@ python 3.10
 
 # Install Requirements
 To run the reaction condition selector you need:
-* RDkit
+* RDkit <br>
 * RDchiral <br>
-
+* Chemprop v1.6.1 <br>
 You can go to https://github.com/connorcoley/rdchiral for more informaton.
 
 # Training D-MPNN Model
