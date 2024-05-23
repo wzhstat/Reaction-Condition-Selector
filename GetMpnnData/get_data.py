@@ -101,7 +101,7 @@ def save_csv(args,out_data):
         pass
     else:
         os.mkdir(args.save_path)
-    path = '%s/GCN_data'%(args.save_path)
+    path = '%s'%(args.save_path)
     if os.path.exists(path):
         pass
     else:
