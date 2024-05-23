@@ -15,7 +15,7 @@ pip install chemprop==1.6.1 \
 pip install functools
 conda install rdkit=2023.3.3 -c rdkit \
 ```
-We also provide the corresponding Environment file, You can reproduce the environment directly through the provided .yaml file.<br>
+We also provide the corresponding environment file, You can reproduce the environment directly through the provided .yaml file.<br>
 ```
 conda env create -f environment.yaml
 ```
