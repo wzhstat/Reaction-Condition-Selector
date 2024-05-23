@@ -14,8 +14,8 @@ You can go to https://github.com/connorcoley/rdchiral for more informaton.
 # Training D-MPNN Model
 
 ## Step 1 Data Pre-processing
-Before training, make sure you have the data file, which should contain two parts: the csv files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the ```keys``` folder.<br>
-You can run the ```preprocessing.py``` file to get the preprocessed data.<br>
+Before training, make sure you have the data file, which should contain two parts: the csv files```data_train.csv```, ```data_test.csv``` and ``` data_val.csv``` and the ```keys``` folder. The keys file can be downloaded directly from ```data```, the csv files can be download in  <br>
+You can run the ```preprocessing.py``` file to get the preprocessed data. <br>
 ```
 python preprocessing.py
 ```
