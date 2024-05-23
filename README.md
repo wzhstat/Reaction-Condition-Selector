@@ -31,7 +31,7 @@ python preprocessing.py
 You can run ```train.sh``` files directly to get models of catalyst, solvents, and reagents, we recommend using GPUs for faster training. Corresponding models are also given in Models. <br>
 To train model for a particular condition, take solv0 for example, you can run:<br>
 ```
-chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data/GCN_data_train.csv  --separate_val_path ./data/MPNN_data/GCN_data/GCN_data_val.csv --separate_test_path ./data/MPNN_data/GCN_data/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 538 --save_dir ./data/models/GCN_solv0  --reaction --extra_metrics accuracy top3 --epochs 35
+chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data/GCN_data_train.csv  --separate_val_path ./data/MPNN_data/GCN_data/GCN_data_val.csv --separate_test_path ./data/MPNN_data/GCN_data/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 538 --save_dir ./models/GCN_solv0  --reaction --extra_metrics accuracy top3 --epochs 35
 ```
 <br>
 You end up with a models folder that contains the trained D-MPNN model. You can also download trained models directly from models/models. <br>
