@@ -333,7 +333,7 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='reaction condition prediction')
     parser.add_argument('--test_path', type=str, default='./data_test.csv', help='path to test data')
-    parser.add_argument('--model_path', type=str, default='./data/models', help='path to model')
+    parser.add_argument('--model_path', type=str, default='./models', help='path to model')
     parser.add_argument('--key_path', type=str, default='./data/keys', help='path to condition keys')
     parser.add_argument('--library_path', type=str, default='./data/condition_library', help='path to classed conditions library')
     parser.add_argument('--save_path', type=str, default='./data/prediction', help='path to save condition prediction')
