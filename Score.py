@@ -8,6 +8,9 @@ from functools import reduce
 from ConditionClassifier import get_labeled_condition,same_class
 import argparse
 import numpy as np
+from rdkit import Chem
+from rdkit import RDLogger
+RDLogger.DisableLog('rdApp.*')
 
 def remove_chirality(SMILES:str):
     '''
@@ -25,7 +28,7 @@ def get_true_data(path:str):
     for i in range(l):
         condition_trun = []
         for i in [str(data['cat'][i]),str(data['solv0'][i]),str(data['solv1'][i]),str(data['reag0'][i]),str(data['reag1'][i]),str(data['reag2'][i])]:
-             try:
+            try:
                 mol = Chem.MolFromSmiles(i)
                 inch = Chem.MolToInchi(mol)
                 mol = Chem.MolFromInchi(inch)
@@ -115,6 +118,10 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+    
+
+
 
     
 
