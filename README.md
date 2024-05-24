@@ -21,7 +21,7 @@ conda env create -f environment.yaml
 
 # Training D-MPNN Model
 ## Step 0
-Please first download the Cluster Predictor program from GitHub. It contains some of the data and the code needed to replicate the work, and the pre-trained model: <br>
+Please first download the Cluster Predictor program from GitHub. It contains some of the data,the pre-trained model and the code needed to replicate the work. : <br>
 ```
 git clone https://github.com/wzhstat/Reaction-Condition-Selector.git
 cd ./Reaction-Condition-Selector 
