@@ -12,7 +12,6 @@ conda activate Cluster_Predictor \
 pip3 install torch torchvision torchaudio --extra-index-url https://download.pytorch.org/whl/cu116 \
 pip install pandas==2.1.0 \
 pip install chemprop==1.6.1 \
-pip install functools
 conda install rdkit=2023.3.3 -c rdkit \
 ```
 We also provide the corresponding environment file, You can reproduce the environment directly through the provided .yaml file.<br>
