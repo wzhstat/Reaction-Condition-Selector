@@ -104,15 +104,15 @@ Cluster Top-10 Accuracy: 0.9645355855660255
 
 # Predictions of conditions in actual drug synthesis routes
 ## Step 1 Obtaining route data
-Our actual route data was artificially extracted from the article, and the processed ```sys_data.csv``` file can be found in the ```data``` folder.<Br>
+Our actual route data was artificially extracted from the article, and the processed ```JMC_data.csv``` file can be found in the ```data``` folder.<Br>
 
 ## Step 2 Prediction
-You can run ```make_sys_predictions.sh``` to complete the model predictions, which generates a prediction folder containing predictions with and without clustering.<br>
+You can run ```make_JMC_predictions.sh``` to complete the model predictions, which generates a prediction folder containing predictions with and without clustering.<br>
 
 ## Setp 3 Calculate Accuracy
 Please run Score.py to calculate the accuracy of the model predictions.
 ```
-python Score.py --data_path ./data/sys_data.csv --pred_path ./data/sys_prediction
+python Score.py --data_path ./data/JMC_data.csv --pred_path ./data/JMC_prediction
 ```
 
 
