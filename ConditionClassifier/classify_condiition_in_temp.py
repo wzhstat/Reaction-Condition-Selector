@@ -72,15 +72,15 @@ def get_condition_key(path:str):
     '''
     get the key of condition.
     '''
-    with open('%s/all_cat_withN.csv'%path,'r') as f:
+    with open('%s/cat_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         cat_list_N = [row['cat'] for row in reader]
 
-    with open('%s/all_solv_withN.csv'%path,'r') as f:
+    with open('%s/solv_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         solv_list_N = [row['solv'] for row in reader]
 
-    with open('%s/all_reag_withN.csv'%path,'r') as f:
+    with open('%s/reag_labels.csv'%path,'r') as f:
             reader = csv.DictReader(f)
             reag_list_N = [row['reag'] for row in reader]
     
@@ -263,7 +263,7 @@ def encode_condition(condition_list:list,cat_list:list,solv_list:list,reag_list:
 
 
 def Classify_reaction_conditions(test_dic,tem,smart,args):
-    cat_list,solv_list,reag_list = get_condition_key(args.key_path)
+    cat_list,solv_list,reag_list = get_condition_key(args.label_path)
     test_list = [eval(str(i)) for i in list(test_dic.keys())]
     test_list = get_labeled_condition(test_list)
     test_list = classify(args,test_list,[],2)
