@@ -15,7 +15,7 @@ def main():
     """
     parser = argparse.ArgumentParser(description='Get data for GCN')
     parser.add_argument('--data_path', type=str, default='data', help='path to data')
-    parser.add_argument('--key_path', type=str, default='data/keys', help='path to data')
+    parser.add_argument('--key_path', type=str, default='data/labels', help='path to data')
     parser.add_argument('--save_path', type=str, default='data/MPNN_data', help='path to save')
     parser.add_argument('--N', type=bool, default=True, help='whether to add None')
     parser.add_argument('--data_name', type=str)
