@@ -285,7 +285,7 @@ def decode_condition(condition_list:list,cat_list:list,solv_list:list,reag_list:
     return out
 
 
-def get_condition_key(path:str):
+def get_condition_labels(path:str):
     with open('%s/cat_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         cat_list_N = [row['cat'] for row in reader]
@@ -388,7 +388,7 @@ def Prediction(args):
     print('time:',t2-t1)
     
     # Load condition key
-    condition_key = get_condition_key(args.label_path)
+    condition_key = get_condition_labels(args.label_path)
 
     # Load classed_conditions_library
     with gzip.open(args.library_path+'/classed_conditions_library_r0_1.json.gz','r') as f:
