@@ -5,7 +5,7 @@ This repository contains a reaction condition selector.
 python 3.10
 
 # Install Requirements
-To run the reaction condition selector you need to make sure you have installed anaconda. The version about pytorch and cudatoolkit should be depended on your machine.
+To run the reaction condition selector you need to make sure you have installed anaconda. The version about ```pytorch``` and ```cudatoolkit``` should be depended on your machine.
 ```
 conda create -n Cluster_Predictor python=3.10 \
 conda activate Cluster_Predictor \
