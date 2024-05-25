@@ -118,7 +118,7 @@ def get_MPNN_data(args):
         target: target name
     '''
     data = pd.read_csv('%s/%s.csv'%(args.data_path,args.data_name))
-    cat_list,solv_list,reag_list = get_keys(args.key_path)
+    cat_list,solv_list,reag_list = get_keys(args.label_path)
     if args.target in ['cat']:
         target_list = cat_list
     elif args.target in ['solv0','solv1']:
