@@ -10,7 +10,7 @@ def main():
     parser = argparse.ArgumentParser(description='Classify reaction conditions')
     parser.add_argument('--data_path', type=str, default='data', help='path to data')
     parser.add_argument('--data_name', type=str, default='USPTO', help='name of data')
-    parser.add_argument('--key_path', type=str, default='data/keys', help='path to data')
+    parser.add_argument('--label_path', type=str, default='data/labels', help='path to data')
     parser.add_argument('--save_path', type=str, default='data/condition_library', help='path to save')
     parser.add_argument('--min_num_covered_rxns_by_rxn_centralized_template', type=int, default=5)
     parser.add_argument('--Inclusion', type=int, default=0.8, help='Inclusion of reaction conditions label')
