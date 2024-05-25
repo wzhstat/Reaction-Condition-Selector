@@ -31,7 +31,7 @@ Before training, make sure you have the data file, which should contain two part
 ```
 ./data/data_train.csv
 ./data/data_test.csv
-./data/ddata_val.csv
+./data/data_val.csv
 ./data/keys
 ```
 You can run the ```preprocessing.py``` file to get the preprocessed data. <br>
@@ -46,7 +46,6 @@ To train model for a particular condition, take solv0 for example, you can run:<
 ```
 chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data_train.csv  --separate_val_path ./data/MPNN_data/GCN_data_val.csv --separate_test_path ./data/MPNN_data/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 542 --save_dir ./models/GCN_solv0  --reaction --extra_metrics accuracy --epochs 35
 ```
-<br>
 You end up with a models folder that contains the trained D-MPNN model. You can also download trained models directly from ```models```. <br>
 
 
