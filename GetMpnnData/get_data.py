@@ -20,15 +20,15 @@ def get_keys(path:str):
         path: csv file path
     '''
     
-    with open('%s/all_cat_withN.csv'%path,'r') as f:
+    with open('%s/cat_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         cat_list = [row['cat'] for row in reader]
     
-    with open('%s/all_solv_withN.csv'%path,'r') as f:
+    with open('%s/solv_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         solv_list = [row['solv'] for row in reader]
 
-    with open('%s/all_reag_withN.csv'%path,'r') as f:
+    with open('%s/reag_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         reag_list = [row['reag'] for row in reader]
     return cat_list,solv_list,reag_list 
