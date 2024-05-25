@@ -27,12 +27,12 @@ git clone https://github.com/wzhstat/Reaction-Condition-Selector.git
 cd ./Reaction-Condition-Selector 
 ```
 ## Step 1 Data Pre-processing
-Before training, make sure you have the data file, which should contain two parts: the csv files```data_train.csv```, ```data_test.csv```, ``` data_val.csv``` and the ```keys``` folder. The keys file can be downloaded directly from ```data```, the csv files can be download in https://www.dropbox.com/scl/fo/v1rhyes2wvead9dz3x4fb/h?rlkey=nqtst7azldcry3ixnoigmcv3v&dl=0. You should put them like this: <br>
+Before training, make sure you have the data file, which should contain two parts: the csv files```data_train.csv```, ```data_test.csv```, ``` data_val.csv``` and the ```labels``` folder. The labels file can be downloaded directly from ```data```, the csv files can be download in https://www.dropbox.com/scl/fo/v1rhyes2wvead9dz3x4fb/h?rlkey=nqtst7azldcry3ixnoigmcv3v&dl=0. You should put them like this: <br>
 ```
 ./data/data_train.csv
 ./data/data_test.csv
 ./data/data_val.csv
-./data/keys
+./data/labels
 ```
 You can run the ```preprocessing.py``` file to get the preprocessed data. <br>
 ```
