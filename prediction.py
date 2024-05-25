@@ -222,15 +222,15 @@ def decode_condition(condition_list:list,cat_list:list,solv_list:list,reag_list:
 
 
 def get_condition_key(path:str):
-    with open('%s/all_cat_withN.csv'%path,'r') as f:
+    with open('%s/cat_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         cat_list_N = [row['cat'] for row in reader]
 
-    with open('%s/all_solv_withN.csv'%path,'r') as f:
+    with open('%s/solv_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         solv_list_N = [row['solv'] for row in reader]
 
-    with open('%s/all_reag_withN.csv'%path,'r') as f:
+    with open('%s/reag_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         reag_list_N = [row['reag'] for row in reader]   
     
@@ -299,7 +299,7 @@ def Prediction(args):
     t2 = time.time()
     print('time:',t2-t1)
     # Load condition key
-    condition_key = get_condition_key(args.key_path)
+    condition_key = get_condition_key(args.label_path)
 
     # Load condition_library
     with gzip.open(args.library_path+'/condition_library_r0_1.json.gz','r') as f:
@@ -334,7 +334,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='reaction condition prediction')
     parser.add_argument('--test_path', type=str, default='./data/data_test.csv', help='path to test data')
     parser.add_argument('--model_path', type=str, default='./models', help='path to model')
-    parser.add_argument('--key_path', type=str, default='./data/keys', help='path to condition keys')
+    parser.add_argument('--label_path', type=str, default='./data/labels', help='path to condition keys')
     parser.add_argument('--library_path', type=str, default='./data/condition_library', help='path to classed conditions library')
     parser.add_argument('--save_path', type=str, default='./data/prediction', help='path to save condition prediction')
     args = parser.parse_args()
