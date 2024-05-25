@@ -68,7 +68,7 @@ def Categorization_conditions(condition:str):
             pass
     return list(set(out_list))
 
-def get_condition_key(path:str):
+def get_condition_labels(path:str):
     '''
     get the key of condition.
     '''
@@ -263,7 +263,7 @@ def encode_condition(condition_list:list,cat_list:list,solv_list:list,reag_list:
 
 
 def Classify_reaction_conditions(test_dic,tem,smart,args):
-    cat_list,solv_list,reag_list = get_condition_key(args.label_path)
+    cat_list,solv_list,reag_list = get_condition_labels(args.label_path)
     test_list = [eval(str(i)) for i in list(test_dic.keys())]
     test_list = get_labeled_condition(test_list)
     test_list = classify(args,test_list,[],2)
