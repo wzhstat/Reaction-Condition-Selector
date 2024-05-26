@@ -75,7 +75,7 @@ python get_condition_library.py --Inclusion 0.8 --data_set train --tpl_radius 0
 ```--tpl_radius``` is the radius of templates used for categorization.<br>
 
 ## Step 2 Prediction
-You can run ```make_predictions.sh``` to complete the model predictions, which generates a prediction folder containing predictions with and without clustering.<br>
+You can run ```make_predictions.sh``` to complete the model predictions, which generates a ```prediction``` folder containing predictions with and without clustering. The results are saved in the ```data``` folder by default<br>
 ```
 chmod u+x ./make_predictions.sh
 ./make_predictions.sh
