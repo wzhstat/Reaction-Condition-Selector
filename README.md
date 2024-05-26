@@ -67,6 +67,10 @@ python get_condition_library.py --Inclusion 0.8 --data_set train --tpl_radius 0
 
 ## Step 2 Prediction
 You can run ```make_predictions.sh``` to complete the model predictions, which generates a prediction folder containing predictions with and without clustering.<br>
+```
+chmod u+x ./make_predictions.sh
+./make_predictions.sh
+```
 An examples of prediction results that include clustering are as follows:<br>
 ```
 class id: 50_4
@@ -113,6 +117,10 @@ Our actual route data was artificially extracted from the article, and the proce
 
 ## Step 2 Prediction
 You can run ```make_JMC_predictions.sh``` to complete the model predictions, which generates a prediction folder containing predictions with and without clustering.<br>
+```
+chmod u+x ./make_JMC_predictions.sh
+./make_JMC_predictions.sh
+```
 
 ## Setp 3 Calculate Accuracy
 Please run Score.py to calculate the accuracy of the model predictions.
