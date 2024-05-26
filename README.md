@@ -72,8 +72,7 @@ This will generate a ```condition_library``` folder under the ```data``` folder,
 ## Step 2 Prediction
 You can run ```make_predictions.sh``` to complete the model predictions, which generates a ```prediction``` folder containing predictions with and without clustering. The results are saved in the ```data``` folder by default<br>
 ```
-chmod u+x ./make_predictions.sh
-./make_predictions.sh
+bash ./make_predictions.sh
 ```
 An examples of prediction results that include clustering are as follows:<br>
 ```
