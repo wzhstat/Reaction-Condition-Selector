@@ -43,8 +43,7 @@ python preprocessing.py
 ## Step 2 Training
 You can run ```train.sh``` files directly to get models of catalyst, solvents, and reagents, we recommend using GPUs for faster training. <br>
 ```
-chmod u+x ./train.sh
-./train.sh
+bash ./train.sh
 ```
 To train model for a particular condition constitute, take solv0 for example, you can run:<br>
 ```
@@ -58,8 +57,7 @@ You end up with a models folder that contains the trained D-MPNN model. You can 
 ## Step 1 Construction of Reaction Condition Library
 Before making a prediction, run ```BuildConditionLibrary.sh``` to build the three types of reaction condition libraries needed for prediction, namely the r1 library, the r0 library, and the r0* library. 
 ```
-chmod u+x ./BuildConditionLibrary.sh
-./BuildConditionLibrary.sh
+bash ./BuildConditionLibrary.sh
 ```
 This will generate a ```condition_library``` folder under the ```data``` folder, which contains the following libraries:<br>
 ```
@@ -70,13 +68,6 @@ This will generate a ```condition_library``` folder under the ```data``` folder,
 ./data/condition_library/classed_conditions_library_r0.json.gz
 ./data/condition_library/classed_conditions_library_r0_1.json.gz
 ```
-You can also run ```get_condition_library.py``` directly to get a specific library of reaction conditions.
-```
-python get_condition_library.py --Inclusion 0.8 --data_set train --tpl_radius 0
-```
-```Inclusion```is the tolerance for labels of each category.   It indicates that a label can be selected as a category label only when the number of times it appears is greater than the total number of conditions times Inclusion.<br>
-```data_set``` is the data set to be collected. <br>
-```--tpl_radius``` is the radius of templates used for categorization.<br>
 
 ## Step 2 Prediction
 You can run ```make_predictions.sh``` to complete the model predictions, which generates a ```prediction``` folder containing predictions with and without clustering. The results are saved in the ```data``` folder by default<br>
@@ -131,8 +122,7 @@ Our actual route data was artificially extracted from the article, and the proce
 ## Step 2 Prediction
 You can run ```make_JMC_predictions.sh``` to complete the model predictions, which generates a prediction folder containing predictions with and without clustering.<br>
 ```
-chmod u+x ./make_JMC_predictions.sh
-./make_JMC_predictions.sh
+bash ./make_JMC_predictions.sh
 ```
 
 ## Setp 3 Calculate Accuracy
