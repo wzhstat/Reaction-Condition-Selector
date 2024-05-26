@@ -57,6 +57,15 @@ Before making a prediction, run ```BuildConditionLibrary.sh``` to build the thre
 chmod u+x ./BuildConditionLibrary.sh
 ./BuildConditionLibrary.sh
 ```
+This will generate a ```condition_library``` folder under the data folder, which contains the following libraries:<br>
+```
+./data/condition_library/condition_library_r1.json.gz
+./data/condition_library/condition_library_r0.json.gz
+./data/condition_library/condition_library_r0_1.json.gz
+./data/condition_library/classed_conditions_library_r1.json.gz
+./data/condition_library/classed_conditions_library_r0.json.gz
+./data/condition_library/classed_conditions_library_r0_1.json.gz
+```
 You can also run ```get_condition_library.py``` directly to get a specific library of reaction conditions.
 ```
 python get_condition_library.py --Inclusion 0.8 --data_set train --tpl_radius 0
