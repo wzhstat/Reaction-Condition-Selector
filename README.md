@@ -57,7 +57,7 @@ Before making a prediction, run ```BuildConditionLibrary.sh``` to build the thre
 chmod u+x ./BuildConditionLibrary.sh
 ./BuildConditionLibrary.sh
 ```
-This will generate a ```condition_library``` folder under the data folder, which contains the following libraries:<br>
+This will generate a ```condition_library``` folder under the ```data``` folder, which contains the following libraries:<br>
 ```
 ./data/condition_library/condition_library_r1.json.gz
 ./data/condition_library/condition_library_r0.json.gz
