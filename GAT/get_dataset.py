@@ -166,8 +166,10 @@ def map_reac_to_prod(mol_reac: Chem.Mol, mol_prod: Chem.Mol):
 
 def get_rxn_info_from_sma(smarts):
     mol = smarts.split('>>')
-    mol_reac = make_mol(mol[0], False, False, True)
-    mol_prod = make_mol(mol[1], False, False, True)
+    mol_reac = Chem.MolFromSmiles(mol[0])
+    mol_prod = Chem.MolFromSmiles(mol[1])
+
+    # Atom features
     ri2pi, pio, rio = map_reac_to_prod(mol_reac, mol_prod)
     f_atoms_reac = [atom_features(atom) for atom in mol_reac.GetAtoms()] + [atom_features_zeros(mol_prod.GetAtomWithIdx(index)) for index in pio]
     f_atoms_prod = [atom_features(mol_prod.GetAtomWithIdx(ri2pi[atom.GetIdx()])) if atom.GetIdx() not in rio else
@@ -204,6 +206,7 @@ def get_rxn_info_from_sma(smarts):
             f_bond_reac = bond_features(bond_reac)
             f_bond_prod = bond_features(bond_prod)
             f_bond_diff = [y - x for x, y in zip(f_bond_reac, f_bond_prod)]
+            
             f_bond = f_bond_reac + f_bond_diff
             f_bonds.append(f_atoms[a1] + f_bond)
             f_bonds.append(f_atoms[a2] + f_bond)
@@ -211,7 +214,7 @@ def get_rxn_info_from_sma(smarts):
             edge_dir2.append(a2)
             edge_dir1.append(a2)
             edge_dir2.append(a1)
-    edge_2d = torch.from_numpy(np.array([edge_dir1, edge_dir2]))
+            edge_2d = torch.from_numpy(np.array([edge_dir1, edge_dir2]))
     n_atoms = torch.tensor([n_atoms], dtype=torch.long)
     f_atoms = torch.tensor(f_atoms, dtype=torch.float)
     f_bonds = torch.tensor(f_bonds, dtype=torch.float)
@@ -220,7 +223,10 @@ def get_rxn_info_from_sma(smarts):
 def process_single_graph(smarts, target, index):
     n_atoms, f_atoms, f_bonds, edge_index = get_rxn_info_from_sma(smarts)
     batch = torch.full((n_atoms,), index, dtype=torch.long)
-    y = torch.tensor([target], dtype=torch.long)
+    if target != None:
+        y = torch.tensor([target], dtype=torch.long)
+    else:
+        y = y = torch.tensor([0], dtype=torch.long)
     return n_atoms, f_atoms, f_bonds, edge_index, y, batch
 
 
@@ -234,7 +240,10 @@ class GraphDataset(Dataset):
 
     def __getitem__(self, idx):
         smart = self.data['reaction'][idx]
-        target = self.data[self.target][idx]
+        if self.target != None:
+            target = self.data[self.target][idx]
+        else:
+            target = None
         n_atoms, f_atoms, f_bonds, edge_index, y, batch = process_single_graph(smart, target, idx)
         
         return {
