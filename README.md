@@ -19,7 +19,7 @@ We also provide the corresponding environment file, You can reproduce the enviro
 conda env create -f environment.yaml
 ```
 
-# Training GNN Model
+# Training GNN Models
 ## Step 0
 Please first download the Cluster Predictor program from GitHub. It contains some of the data,the pre-trained model and the code needed to replicate the work. : <br>
 ```
@@ -40,7 +40,7 @@ python preprocessing.py
 ```
 
 
-## Step 2-1 Training D-MPNN Model
+## Step 2-1 Training D-MPNN Models
 You can run ```train.sh``` files directly to get models of catalyst, solvents, and reagents, we recommend using GPUs for faster training. <br>
 ```
 bash ./train.sh
@@ -51,7 +51,7 @@ chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data_trai
 ```
 You end up with a models folder that contains the trained D-MPNN model. You can also find trained models directly from ```models```. <br>
 
-## Step 2-2 Training GAT Model
+## Step 2-2 Training GAT Models
 You can run ```GAT_train.py``` files directly to get models of catalyst, solvents, and reagents, we recommend using GPUs for faster training. <br>
 ```
 python GAT_train.py
