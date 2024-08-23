@@ -108,6 +108,10 @@ Please run Score.py to calculate the accuracy of the model predictions.
 ```
 python Score.py --data_path ./data/data_test.csv --pred_path ./data/prediction
 ```
+or
+```
+python Score.py --data_path ./data/data_test.csv --pred_path ./data/GATprediction
+```
 This may take a while, and the calculated result will be printed out：
 ```
 Top-1 Accuracy: 0.44624893250539177
