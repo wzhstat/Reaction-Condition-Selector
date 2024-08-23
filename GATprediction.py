@@ -197,6 +197,6 @@ if __name__ == '__main__':
     parser.add_argument('--model_path', type=str, default='./GATmodel', help='path to model')
     parser.add_argument('--label_path', type=str, default='./data/labels', help='path to condition keys')
     parser.add_argument('--library_path', type=str, default='./data/condition_library', help='path to classed conditions library')
-    parser.add_argument('--save_path', type=str, default='./data/prediction', help='path to save condition prediction')
+    parser.add_argument('--save_path', type=str, default='./data/GATprediction', help='path to save condition prediction')
     args = parser.parse_args()
     Prediction(args)
