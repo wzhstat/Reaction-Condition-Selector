@@ -57,7 +57,7 @@ You can run ```GAT_train.py``` files directly to get models of catalyst, solvent
 ```
 python GAT_train.py
 ```
-You end up with a models folder that contains the trained GAT model. You can also find trained models directly from ```GATmodels```. <br>
+You end up with a models folder that contains the trained GAT model. You can also find trained models directly from ```GATmodels```, which can be download in https://www.dropbox.com/scl/fo/v1rhyes2wvead9dz3x4fb/h?rlkey=nqtst7azldcry3ixnoigmcv3v&dl=0.. <br>
 
 # Using Trained Model to Make Predictions
 
