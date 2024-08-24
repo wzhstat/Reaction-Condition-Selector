@@ -35,9 +35,9 @@ def train(model, dataloader, val_dataloader, criterion, optimizer, num_epochs = 
         evals = eval(model, val_dataloader, device, criterion)
         if evals["Loss"] < last_lost:
             last_lost = evals["Loss"]
-            if not os.path.exists('./GATmodel'):
-                os.makedirs('./GATmodel')
-            torch.save(model.state_dict(), './GATmodel/model_%s.pth'%(target))
+            if not os.path.exists('./GATmodels'):
+                os.makedirs('./GATmodels')
+            torch.save(model.state_dict(), './GATmodels/model_%s.pth'%(target))
     return model
 
 def eval(model, dataloader, device, criterion):
