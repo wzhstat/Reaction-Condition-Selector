@@ -281,7 +281,7 @@ def Prediction(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='reaction condition prediction')
     parser.add_argument('--test_path', type=str, default='./data/data_test.csv', help='path to test data')
-    parser.add_argument('--model_path', type=str, default='./GAT_models', help='path to model')
+    parser.add_argument('--model_path', type=str, default='./GATmodels', help='path to model')
     parser.add_argument('--label_path', type=str, default='./data/labels', help='path to condition labels')
     parser.add_argument('--library_path', type=str, default='./data/condition_library', help='path to classed conditions library')
     parser.add_argument('--save_path', type=str, default='./data/GATprediction', help='path to save condition prediction')
