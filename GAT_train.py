@@ -86,9 +86,9 @@ def eval(model, dataloader, device, criterion):
 
 
 if __name__ == '__main__':  
-    data_train = pd.read_csv('./GCN_data/GCN_data_train.csv')
-    data_test = pd.read_csv('./GCN_data/GCN_data_test.csv')
-    data_val = pd.read_csv('./GCN_data/GCN_data_val.csv')
+    data_train = pd.read_csv('./data/MPNN_data/GCN_data_train.csv')
+    data_test = pd.read_csv('./data/MPNN_data/GCN_data_test.csv')
+    data_val = pd.read_csv('./data/MPNN_data/GCN_data_val.csv')
 
     target_list = ['cat','solv0',	'solv1',	'reag0',	'reag1',	'reag2']
     target_class_num = [439, 542, 542, 2746, 2746, 2746]
