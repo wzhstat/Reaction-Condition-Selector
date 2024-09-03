@@ -41,7 +41,7 @@ python preprocessing.py
 ```
 
 
-## Step 2-1 Training D-MPNN Models
+## Step 2 Training D-MPNN Models
 You can run ```train.sh``` files directly to get models of catalyst, solvents, and reagents, we recommend using GPUs for faster training. <br>
 ```
 bash ./train.sh
@@ -51,13 +51,6 @@ To train model for a particular condition constitute, take solv0 for example, yo
 chemprop_train --target_columns solv0 --data_path ./data/MPNN_data/GCN_data_train.csv  --separate_val_path ./data/MPNN_data/GCN_data_val.csv --separate_test_path ./data/MPNN_data/GCN_data_test.csv --dataset_type multiclass --multiclass_num_classes 542 --save_dir ./models/GCN_solv0  --reaction --extra_metrics accuracy --epochs 35
 ```
 You end up with a models folder that contains the trained D-MPNN model. You can also find trained models directly from ```models```. <br>
-
-## Step 2-2 Training GAT Models
-You can run ```GAT_train.py``` files directly to get models of catalyst, solvents, and reagents, we recommend using GPUs for faster training. <br>
-```
-python GAT_train.py
-```
-You end up with a models folder that contains the trained GAT model. You can also find trained models directly from ```GATmodels```, which can also be download in https://www.dropbox.com/scl/fo/v1rhyes2wvead9dz3x4fb/h?rlkey=nqtst7azldcry3ixnoigmcv3v&dl=0.. <br>
 
 # Using Trained Model to Make Predictions
 
@@ -109,10 +102,7 @@ Please run Score.py to calculate the accuracy of the model predictions.
 ```
 python Score.py --data_path ./data/data_test.csv --pred_path ./data/prediction
 ```
-or
-```
-python Score.py --data_path ./data/data_test.csv --pred_path ./data/GATprediction
-```
+
 This may take a while, and the calculated result will be printed out：
 ```
 Top-1 Accuracy: 0.44624893250539177
