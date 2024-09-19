@@ -13,7 +13,7 @@ import argparse
 import gzip
 csv.field_size_limit(500 * 1024 * 1024)
 
-def get_labels(path:str):
+def get_keys(path:str):
     '''
     open csv file and get all cat,solv,reag keys
     args:
@@ -62,7 +62,7 @@ def get_index(condition,list):
     except Exception as e:
         return 0
 
-def Extraction_MPNN_data(args,target_list: list, data: pd.DataFrame):
+def Extraction_MPNN_data(args,target_list: list, data: pd.DataFrame, remove_reagents: bool):
     '''
     open csv file and get all data for MPNN
     args:
@@ -79,7 +79,9 @@ def Extraction_MPNN_data(args,target_list: list, data: pd.DataFrame):
     #in_lists = Parallel(n_jobs=-1, verbose=4)(delayed(in_list)(condition,target_list) for condition in list(data[args.target]))
     #data = data[in_lists]
     MLP_all_data = pd.DataFrame()
-    rxnsmile = Parallel(n_jobs=-1, verbose=4)(delayed(remove_reagent)(reaction) for reaction in list(data['reaction']))
+    rxnsmile = []
+    if remove_reagents:
+        rxnsmile = Parallel(n_jobs=-1, verbose=4)(delayed(remove_reagent)(reaction) for reaction in list(data['reaction']))
     target_index = Parallel(n_jobs=-1, verbose=4)(delayed(get_index)(condition,target_list) for condition in list(data[args.target]))
     MLP_all_data['reaction'] = rxnsmile
     MLP_all_data['target'] = target_index
@@ -109,7 +111,7 @@ def save_csv(args,out_data):
     out_data.to_csv('%s/%s'%(path,data_name),index=False)
     print('save to %s/%s'%(path,data_name))
 
-def get_MPNN_data(args):
+def get_MPNN_data(args, remove_reagents = False):
     '''
     get data for GCNN
     args:
@@ -118,14 +120,14 @@ def get_MPNN_data(args):
         target: target name
     '''
     data = pd.read_csv('%s/%s.csv'%(args.data_path,args.data_name))
-    cat_list,solv_list,reag_list = get_labels(args.label_path)
+    cat_list,solv_list,reag_list = get_keys(args.label_path)
     if args.target in ['cat']:
         target_list = cat_list
     elif args.target in ['solv0','solv1']:
         target_list =solv_list
     else:
         target_list = reag_list
-    MLP_all_data= Extraction_MPNN_data(args,target_list,data)
+    MLP_all_data= Extraction_MPNN_data(args,target_list,data,remove_reagents)
     return MLP_all_data
 
 if __name__ == '__main__':
