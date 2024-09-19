@@ -27,8 +27,9 @@ def main():
         for target in target_list:
             args = parser.parse_args(['--data_name', data, '--target', target])
             if target == 'cat':
-                out['reaction'] = get_MPNN_data(args)['reaction']
-                out[target] = get_MPNN_data(args)['target']
+                datas = get_MPNN_data(args , remove_reagents=True)
+                out['reaction'] = datas['reaction']
+                out[target] = datas['target']
             else:
                 out[target] = get_MPNN_data(args)['target']
         save_csv(args,out)
