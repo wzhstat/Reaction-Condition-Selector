@@ -1,4 +1,4 @@
-# Reaction-Condition-Selector
+# Reacon
 This repository contains a reaction condition selector.
 
 # Python Version
