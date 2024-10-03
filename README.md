@@ -25,7 +25,7 @@ conda env create -f environment.yaml
 Please first download the Cluster Predictor program from GitHub. It contains some of the data,the pre-trained model and the code needed to replicate the work. : <br>
 ```
 git clone https://github.com/wzhstat/Reacon.git  \
-cd ./Reaction-Condition-Selector 
+cd ./Reacon 
 ```
 ## Step 1 Data Pre-processing
 Before training, make sure you have the data file, which should contain two parts: the csv files```data_train.csv```, ```data_test.csv```, ``` data_val.csv``` and the ```labels``` folder. The labels file can be downloaded directly from ```data```, the csv files can be download in https://www.dropbox.com/scl/fo/v1rhyes2wvead9dz3x4fb/h?rlkey=nqtst7azldcry3ixnoigmcv3v&dl=0. You should put them like this: <br>
