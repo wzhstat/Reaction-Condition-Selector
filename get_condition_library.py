@@ -13,7 +13,7 @@ def main():
     parser.add_argument('--label_path', type=str, default='data/labels', help='path to data')
     parser.add_argument('--save_path', type=str, default='data/condition_library', help='path to save')
     parser.add_argument('--min_num_covered_rxns_by_rxn_centralized_template', type=int, default=5)
-    parser.add_argument('--Inclusion', type=int, default=0.8, help='Inclusion of reaction conditions label')
+    parser.add_argument('--Inclusion', type=float, default=0.8, help='Inclusion of reaction conditions label')
     parser.add_argument('--data_set', type=str, default='train', help='data set to use,can be all, train, test or val.')
     parser.add_argument('--n_jobs', type=int, default=-1, help='number of jobs to run in parallel')
     parser.add_argument('--tpl_radius', type=str, default='0*', help='radius of template')
