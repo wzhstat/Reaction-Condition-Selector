@@ -358,14 +358,6 @@ def Prediction(args):
     print('Save to: %s'%args.save_path)
     print(t2-t1)
 
-    from Score import cal_acc
-    parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path',type=str,default=args.test_path)
-    parser.add_argument('--pred_path',type=str,default=args.save_path)
-    args = parser.parse_args()
-    print(n_list)
-    cal_acc(args)
-
 if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='reaction condition prediction')
