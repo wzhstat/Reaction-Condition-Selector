@@ -275,6 +275,7 @@ def Nu_condition_selector(MPNN_out,n_list):
     cat_list,solv_list,reag_list = condition_key
     top3_indices = []
     for i in range(len(MPNN_out)):
+        lists = torch.tensor(MPNN_out[i])
         top3_indices.append(torch.topk(lists, 3).indices)
     #combine the top-3 indices
     output = {}
