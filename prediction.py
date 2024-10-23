@@ -320,7 +320,7 @@ def Prediction(args):
     # MPNN prediction
     MPNN_pred = {}
     for target in ['cat','solv0','solv1','reag0','reag1','reag2']:
-        model_dir = "%s/GCN_%s"%(args.model_path,target)
+        model_dir = "%s/MPNN_%s"%(args.model_path,target)
         MPNN_pred[target] = MPNN_prediction(args,model_dir,smiles)
     t2 = time.time()
     print('time:',t2-t1)
