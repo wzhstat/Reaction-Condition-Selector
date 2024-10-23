@@ -271,6 +271,32 @@ def MPNN_prediction(args,model_dir,smiles):
     preds = make_predictions(MPNN_args,smiles)
     return preds
 
+def Nu_condition_selector(MPNN_out,n_list):
+    cat_list,solv_list,reag_list = condition_key
+    top3_indices = []
+    for i in range(len(MPNN_out)):
+        top3_indices.append(torch.topk(lists, 3).indices)
+    #combine the top-3 indices
+    output = {}
+    for i in range(n_list[0]):
+        for j in range(n_list[1]):
+            for k in range(n_list[2]):
+                for l in range(n_list[3]):
+                    for m in range(n_list[4]):
+                        for n in range(1):
+                            indices = [top3_indices[0][i], top3_indices[1][j], top3_indices[2][k], top3_indices[3][l], top3_indices[4][m], top3_indices[5][n]]
+                            indices = [int(index) for index in indices]
+                            score = 1
+                            text_condition = decode_condition([indices],cat_list,solv_list,reag_list)
+                            for con in range(len(indices)):
+                                if score > 0:
+                                    score *= MPNN_out[con][indices[con]]
+                                else:
+                                    score *= 1e-10
+                            output[str(text_condition[0])] = score
+    output = sorted(output.items(), key=lambda x:x[1],reverse=True)
+    return output
+
 
 def Prediction(args):
     '''
@@ -294,12 +320,13 @@ def Prediction(args):
     # MPNN prediction
     MPNN_pred = {}
     for target in ['cat','solv0','solv1','reag0','reag1','reag2']:
-        model_dir = "%s/MPNN_%s"%(args.model_path,target)
+        model_dir = "%s/GCN_%s"%(args.model_path,target)
         MPNN_pred[target] = MPNN_prediction(args,model_dir,smiles)
     t2 = time.time()
     print('time:',t2-t1)
     # Load condition key
     condition_key = get_condition_labels(args.label_path)
+    cat_list,solv_list,reag_list = condition_key
 
     # Load condition_library
     with gzip.open(args.library_path+'/condition_library_r0_1.json.gz','r') as f:
@@ -316,8 +343,10 @@ def Prediction(args):
             condition_pred[str(ids[i])] = condition_selector(args,template_r1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],conditions_library_r1)
         elif template_r0[i] in conditions_library_r0:
             condition_pred[str(ids[i])] = condition_selector(args,template_r0[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],conditions_library_r0)      
-        else:
+        elif template_r_1[i] in conditions_library_r_1:
             condition_pred[str(ids[i])] = condition_selector(args,template_r_1[i],[list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],conditions_library_r_1)
+        else:
+            condition_pred[str(ids[i])] = Nu_condition_selector([list(MPNN_pred['cat'][i][0]),list(MPNN_pred['solv0'][i][0]),list(MPNN_pred['solv1'][i][0]),list(MPNN_pred['reag0'][i][0]),list(MPNN_pred['reag1'][i][0]),list(MPNN_pred['reag2'][i][0])],[3,3,3,3,3])
     t3 = time.time()
     print('time:',t2-t1)
     # Save
@@ -328,6 +357,14 @@ def Prediction(args):
     t2 = time.time()
     print('Save to: %s'%args.save_path)
     print(t2-t1)
+
+    from Score import cal_acc
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--data_path',type=str,default=args.test_path)
+    parser.add_argument('--pred_path',type=str,default=args.save_path)
+    args = parser.parse_args()
+    print(n_list)
+    cal_acc(args)
 
 if __name__ == '__main__':
 
