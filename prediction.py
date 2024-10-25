@@ -15,6 +15,7 @@ from rdkit import DataStructs
 from joblib import Parallel, delayed
 import time
 import os
+import torch
 
 def make_predictions(
     args: PredictArgs,
