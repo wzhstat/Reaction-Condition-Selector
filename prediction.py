@@ -223,6 +223,10 @@ def decode_condition(condition_list:list,cat_list:list,solv_list:list,reag_list:
 
 
 def get_condition_labels(path:str):
+    '''
+    get condition labels
+    This function is used to get condition labels from csv files
+    '''
     with open('%s/cat_labels.csv'%path,'r') as f:
         reader = csv.DictReader(f)
         cat_list_N = [row['cat'] for row in reader]
@@ -239,6 +243,9 @@ def get_condition_labels(path:str):
 
 
 def get_condition_score(conditions,MPNN_out,condition_key):
+    '''
+    This function is used to obtain the scores of all candidates
+    '''
     cat_list,solv_list,reag_list = condition_key
     condition_score = dict()
     for condition in conditions:
@@ -248,6 +255,9 @@ def get_condition_score(conditions,MPNN_out,condition_key):
     return condition_score
 
 def cal_condition_score(condition,MPNN_out):
+    '''
+    The score of the complete reaction condition is the product of the probabilities of each of the reaction components
+    '''
     score = 1
     for i in range(len(condition)-1):
         try:
@@ -273,6 +283,10 @@ def MPNN_prediction(args,model_dir,smiles):
     return preds
 
 def Nu_condition_selector(MPNN_out,n_list):
+    '''
+    We use this naive candidate generation when the template for the predicted reaction is not in our template-condition library.
+    The model captures the complete conditions directly by combining Top-3 predictions for each component
+    '''
     cat_list,solv_list,reag_list = condition_key
     top3_indices = []
     for i in range(len(MPNN_out)):
