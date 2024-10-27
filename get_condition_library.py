@@ -18,9 +18,12 @@ def main():
     parser.add_argument('--n_jobs', type=int, default=-1, help='number of jobs to run in parallel')
     parser.add_argument('--tpl_radius', type=str, default='0*', help='radius of template')
     args = parser.parse_args()
+    # Gets the reaction conditions under each template
     condition_list = get_temp_condition(args)
+    # Create the save path directory if it does not exist
     if not os.path.exists(args.save_path):
         os.makedirs(args.save_path)
+    # *as a path will report an error, so _1 will be used instead
     if args.tpl_radius != '0*':
         with gzip.open('%s/condition_library_r%s.json.gz'%(args.save_path,args.tpl_radius), 'wt') as f:
             json.dump(condition_list, f)
@@ -28,6 +31,7 @@ def main():
         with gzip.open('%s/condition_library_r0_1.json.gz'%(args.save_path), 'wt') as f:
             json.dump(condition_list, f)
     print('start to classify conditions')
+    # Classify the conditions in parallel
     classed_condition_list = Parallel(n_jobs=-1, verbose=4)(delayed(Classify_reaction_conditions)(condition_list[i]['conditions'],condition_list[i]['tpl'],condition_list[i]['tpl_smarts'],args) for i in list(condition_list.keys()))
     classed_condition_dic = {}
     for i in range(len(classed_condition_list)):
