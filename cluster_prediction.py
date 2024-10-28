@@ -5,7 +5,7 @@ from chemprop.args import PredictArgs, TrainArgs
 from chemprop.data import get_data,StandardScaler,MoleculeDataLoader, AtomBondScaler
 from chemprop.models import MoleculeModel
 from chemprop.uncertainty import UncertaintyCalibrator, build_uncertainty_calibrator
-from prediction import make_predictions
+from chemprop.train.make_predictions import make_predictions
 import pandas as pd
 import csv
 import json,gzip
