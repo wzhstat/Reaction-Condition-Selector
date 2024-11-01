@@ -22,7 +22,7 @@ def remove_chirality(SMILES:str):
     return SMILES
 
 def get_true_data(path:str):
-    data = pd.read_csv(path)
+    data = pd.read_csv(path, dtype={'reag0':'str','reag1':'str','reag2':'str'})
     l = data.shape[0]
     y_true = []
     for i in range(l):
@@ -94,7 +94,7 @@ def cal_acc(args):
     with open('%s/condition_prediction.json'%args.pred_path,'r') as f:
         pred = json.load(f)
     y_true = get_true_data(args.data_path)
-    test_data_key = pd.read_csv(args.data_path)['_id'].tolist()
+    test_data_key = pd.read_csv(args.data_path, dtype={'reag0':'str','reag1':'str','reag2':'str'})['_id'].tolist()
     acc_list = Parallel(n_jobs=10)(delayed(is_topk_acc)(y_true[i],[eval(x[0]) for x in pred[str(test_data_key[i])][:10]]) for i in range(len(y_true)))
     acc_list = np.array(acc_list)
     clu_acc_list = Parallel(n_jobs=10)(delayed(is_topk_cluster_acc)(y_true[i],[x['best condition'] for x in cluster_pred[str(test_data_key[i])][1][:10]]) for i in range(len(y_true)))
