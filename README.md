@@ -131,6 +131,36 @@ Please run Score.py to calculate the accuracy of the model predictions.
 python Score.py --data_path ./data/JMC_data.csv --pred_path ./data/JMC_prediction
 ```
 
+# Make your own training data set
+## Step 0 Raw data requirement
+To ensure a smooth process, the original data set should contain at least the following columns：<br>
+1. id_column: A unique character string used to name each reaction.<br>
+2. reaction_column: Reactions recorded with SMILES, such as ```COC1=CC=C2C(=O)CCCC2=C1>>OC1=CC=C2C(=O)CCCC2=C1```. To prevent data leakage, please remove the reagents in advance.<br>
+3. condition_columns: Contains 6 columns, namely ```cat```, ```solv0```, ```solv1```,```reag0```.```reag1```,```reag2```. The parts that don't exist can be filled in with blanks.<br>
+## Step 1 Extract templates
+Our code for extracting templates is derived from rdchiral's template_extractor.py. Refer to https://github.com/connorcoley/rdchiral/blob/master/rdchiral/template_extractor.py for more information.<br>
+To extract templates, please install ```rxnmapper``` first: <br>
+```
+pip install rxnmapper
+```
+r1, r0, and r0* templates can be obtained by running the ```extract_template_from_data.py``` script.
+```
+python extract_template_from_data.py --data_path your_path --reaction_smiles_column reactions --id_column ID --out_path out.csv 
+```
+If your reaction SMILES already contains mapping, you can use ```--skip_mapping```.
+## Step 2 Extract labels
+catalyst, solvents, and reagents labels used as candidates can be generated using the following script.<br>
+```
+python get_labels.py --data_path your_path --out_path out.csv
+```
+
+
+
+
+
+
+
+
 
 
 
