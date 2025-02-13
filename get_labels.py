@@ -5,6 +5,8 @@ import os
 def count_data(data):
     count = {}
     for mol in data:
+        if str(mol) == 'nan':
+            mol = 'None'
         if mol in count:
             count[mol] += 1
         else:

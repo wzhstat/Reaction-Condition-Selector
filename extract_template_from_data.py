@@ -66,10 +66,14 @@ def get_data(args):
     # skip the reactions that cannot be parsed and don't map the reactions(but don't remove them,fill the mapped reactions with the original reactions)
     data = data[can_parse_list] 
     data[args.reaction_smiles_column] = [remove_chirality(reaction) for reaction in data[args.reaction_smiles_column]]
-    print('Mapping reactions...')
-    data['Mapped_Reaction'] = list(rxn_mapper.map_reactions(list(data[args.reaction_smiles_column])))
+    if not args.skip_mapping:
+        print('Mapping reactions...')
+        data['Mapped_Reaction'] = list(rxn_mapper.map_reactions(list(data[args.reaction_smiles_column])))
+        mapping_column = 'Mapped_Reaction'
+    else:
+        mapping_column = args.reaction_smiles_column
     print('Done')
-    split_smiles = data['Mapped_Reaction'].str.split('>>',expand=True)
+    split_smiles = data[mapping_column].str.split('>>',expand=True)
     data['reactants'] = split_smiles[0]
     data['products'] = split_smiles[1]
     data['_id'] = data[args.id_column]
@@ -109,9 +113,10 @@ def get_data(args):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--data_path', type=str, default='test_template_extractor.csv')
-    parser.add_argument('--reaction_smiles_column', type=str, default='reaction')
+    parser.add_argument('--data_path', type=str, default='out.csv')
+    parser.add_argument('--reaction_smiles_column', type=str, default='Mapped_Reaction')
     parser.add_argument('--id_column', type=str, default='_id')
     parser.add_argument('--out_path', type=str, default='out.csv')
+    parser.add_argument('--skip_mapping', action='store_true')
     args = parser.parse_args()
     get_data(args)
