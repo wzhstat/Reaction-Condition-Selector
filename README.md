@@ -131,7 +131,7 @@ Please run Score.py to calculate the accuracy of the model predictions.
 python Score.py --data_path ./data/JMC_data.csv --pred_path ./data/JMC_prediction
 ```
 
-# Make your own training data set
+# Make your own training dataset
 ## Step 0 Raw data requirement
 To ensure a smooth process, the original data set should contain at least the following columns：<br>
 1. id_column: A unique character string used to name each reaction.<br>
