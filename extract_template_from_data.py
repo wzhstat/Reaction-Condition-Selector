@@ -98,15 +98,23 @@ def get_data(args):
             templates_list1.append(template['reaction_smarts'])
         except:
             templates_list1.append('')
-    data['template_r0'] = templates_list0
-    data['template_r1'] = templates_list1
-    templates_r_1 = [remove_mapping(tpl) for tpl in data['template_r0']]
-    data['template_r0*'] = templates_r_1
+    data['tpl_SMARTS_r0'] = templates_list0
+    data['tpl_SMARTS_r1'] = templates_list1
+    templates_r_1 = [remove_mapping(tpl) for tpl in data['tpl_SMARTS_r0']]
+    data['tpl_SMARTS_r0*'] = templates_r_1
 
     # drop if the template is empty
-    data = data[data['template_r0'] != '']
-    data = data[data['template_r1'] != '']
-    data = data[data['template_r0*'] != '']
+    data = data[data['tpl_SMARTS_r0'] != '']
+    data = data[data['tpl_SMARTS_r1'] != '']
+    data = data[data['tpl_SMARTS_r0*'] != '']
+
+    # number the templates
+    data['template_r0'] = data['tpl_SMARTS_r0'].astype('category')
+    data['template_r0'] = data['template_r0'].cat.codes
+    data['template_r1'] = data['tpl_SMARTS_r1'].astype('category')
+    data['template_r1'] = data['template_r1'].cat.codes
+    data['template_r0*'] = data['tpl_SMARTS_r0*'].astype('category')
+    data['template_r0*'] = data['template_r0*'].cat.codes
 
     data.to_csv(args.out_path, index=False)
 
